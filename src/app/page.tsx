@@ -1,10 +1,21 @@
+'use client'
+
 import Image from "next/image";
 import styles from "./page.module.css";
+import Link from "next/link";
+import { useSession } from "next-auth/react";
+import LoginButton from "./components/login-button";
 
 export default function Home() {
-  return (
-    <main className={styles.main}>
-      <div className={styles.description}>
+
+  const { data: session } = useSession()
+
+  if (session) {
+    return (
+      <main className={styles.main}>
+        <LoginButton />
+        <Link href={'/chat'}>Via a chat</Link>
+        {/* <div className={styles.description}>
         <p>
           Get started by editing&nbsp;
           <code className={styles.code}>src/app/page.tsx</code>
@@ -26,19 +37,19 @@ export default function Home() {
             />
           </a>
         </div>
-      </div>
+      </div> */}
 
-      <div className={styles.center}>
-        <Image
-          className={styles.logo}
-          src="/next.svg"
-          alt="Next.js Logo"
-          width={180}
-          height={37}
-          priority
-        />
-      </div>
-
+        <div className={styles.center}>
+          <Image
+            className={styles.logo}
+            src="/next.svg"
+            alt="Next.js Logo"
+            width={180}
+            height={37}
+            priority
+          />
+        </div>
+        {/* 
       <div className={styles.grid}>
         <a
           href="https://nextjs.org/docs?utm_source=create-next-app&utm_medium=appdir-template&utm_campaign=create-next-app"
@@ -89,7 +100,12 @@ export default function Home() {
             Instantly deploy your Next.js site to a shareable URL with Vercel.
           </p>
         </a>
-      </div>
-    </main>
-  );
+      </div> */}
+      </main>
+    )
+  }
+
+  return <div>
+    <LoginButton />
+  </div>
 }
