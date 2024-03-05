@@ -1,9 +1,18 @@
 import NextAuth from "next-auth"
+import Auth0 from "next-auth/providers/auth0"
 import Credentials from "next-auth/providers/credentials"
 
 export const authOptions = {
     // Configure one or more authentication providers
     providers: [
+        Auth0({
+            clientId: process.env.AUTH0_CLIENT_ID!,
+            clientSecret: process.env.AUTH0_CLIENT_SECRET!,
+            issuer: process.env.AUTH0_ISSUER!,
+            // profile(profile, tokens) {
+
+            // }
+        }),
         Credentials({
             // The name to display on the sign in form (e.g. 'Sign in with...')
             name: 'Credentials',
@@ -13,7 +22,8 @@ export const authOptions = {
             // You can pass any HTML attribute to the <input> tag through the object.
             credentials: {
                 username: { label: "Username", type: "text", placeholder: "jsmith" },
-                password: { label: "Password", type: "password" }
+                password: { label: "Password", type: "password" },
+                // eighteen: { label: "Over 18", type: "checkbox" }
             },
             async authorize(credentials, req) {
                 // You need to provide your own logic here that takes the credentials
@@ -44,7 +54,7 @@ export const authOptions = {
                 return null
             }
         })
-    ],
+    ]
 }
 
 const handler = NextAuth(authOptions)

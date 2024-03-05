@@ -8,8 +8,9 @@ export default function LoginButton() {
   if (session) {
     return (
       <>
-        Signed in as {session.user?.name} <br />
-        <button onClick={() => signOut()}>Sign out</button>
+        <div className="text-center">
+          <p>Ciao, {session.user?.name}</p>
+        </div>
       </>
     )
   }
