@@ -9,9 +9,6 @@ export const authOptions = {
             clientId: process.env.AUTH0_CLIENT_ID!,
             clientSecret: process.env.AUTH0_CLIENT_SECRET!,
             issuer: process.env.AUTH0_ISSUER!,
-            // profile(profile, tokens) {
-
-            // }
         }),
         Credentials({
             // The name to display on the sign in form (e.g. 'Sign in with...')

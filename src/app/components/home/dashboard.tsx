@@ -1,12 +1,45 @@
-import { useSession, signIn, signOut } from "next-auth/react"
-import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Fragment, useRef, useState } from "react";
+import { signOut, useSession } from "next-auth/react"
 import LoginButton from "../login-button";
+import { loadStripe } from "@stripe/stripe-js";
 
+const proItemId = process.env.NEXT_PUBLIC_PRO_SUBSCRIPTION!
+const premiumItemId = process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIPTION!
 
 export const Dashboard = () => {
 
+    const { data: session } = useSession()
+
+    const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
+    const createCheckOutSession = async (itemId: String) => {
+        // setLoading(true);
+        const stripe = await stripePromise;
+        const checkoutSession = await fetch("/api/checkout", {
+            method: "POST",
+            headers: {
+                "Content-Type": "application/json",
+            },
+            body: JSON.stringify({
+                itemId
+            }),
+        });
+        if (!stripe || stripe === null) {
+            alert("Something wrong with payment, retry later");
+        }
+
+        const sessionId = (await checkoutSession.json()).id
+
+        console.log(sessionId)
+
+        //TODO:  save sessionId to userId into database!!!!!!!!!!
+        const result = await stripe!.redirectToCheckout({
+            sessionId,
+        });
+
+        if (result.error) {
+            alert(result.error.message);
+        }
+        // setLoading(false);
+    };
     return (
         <>
             {/* <!-- Favicon --> */}
@@ -36,7 +69,7 @@ export const Dashboard = () => {
             <nav className="navbar fixed-top bg-white navbar-expand-lg navbar-light">
                 <div className="container-fluid">
                     <div className="navbar-brand">
-                    <LoginButton />
+                        <LoginButton />
                     </div>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -149,7 +182,7 @@ export const Dashboard = () => {
                         <div className="card pricing-scale">
                             <div className="card-body">
                                 <div className="d-flex align-items-center mb-4">
-                                    <span className="display-4 mr-3">$99</span>
+                                    <span className="display-4 mr-3">$19</span>
                                     <span className="text-muted">Monthly</span>
                                 </div>
                                 <div className="mb-4">
@@ -184,7 +217,7 @@ export const Dashboard = () => {
                                         </li>
                                     </ul>
                                 </div>
-                                <a href="#" className="btn btn-primary hover-animate">
+                                <a onClick={() => createCheckOutSession(proItemId)} className="btn btn-primary hover-animate">
                                     Upgrade Now
                                     <i className="mdi mdi-arrow-right ml-1 small"></i>
                                 </a>
@@ -193,7 +226,7 @@ export const Dashboard = () => {
                         <div className="card">
                             <div className="card-body">
                                 <div className="d-flex align-items-center mb-4">
-                                    <span className="display-4 mr-3">$199</span>
+                                    <span className="display-4 mr-3">$99</span>
                                     <span className="text-muted">Monthly</span>
                                 </div>
                                 <div className="mb-4">
@@ -228,7 +261,7 @@ export const Dashboard = () => {
                                         </li>
                                     </ul>
                                 </div>
-                                <a href="#" className="btn btn-primary hover-animate">
+                                <a onClick={() => createCheckOutSession(premiumItemId)} className="btn btn-primary hover-animate">
                                     Upgrade Now
                                     <i className="mdi mdi-arrow-right ml-1 small"></i>
                                 </a>
@@ -238,7 +271,7 @@ export const Dashboard = () => {
                 </div>
             </section>
 
-           
+
 
             <footer>
                 <div className="container">

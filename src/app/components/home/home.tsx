@@ -486,7 +486,7 @@ export const HeroSection = () => {
                         <div className="card pricing-scale">
                             <div className="card-body">
                                 <div className="d-flex align-items-center mb-4">
-                                    <span className="display-4 mr-3">$99</span>
+                                    <span className="display-4 mr-3">$19</span>
                                     <span className="text-muted">Monthly</span>
                                 </div>
                                 <div className="mb-4">
@@ -530,7 +530,7 @@ export const HeroSection = () => {
                         <div className="card">
                             <div className="card-body">
                                 <div className="d-flex align-items-center mb-4">
-                                    <span className="display-4 mr-3">$199</span>
+                                    <span className="display-4 mr-3">$99</span>
                                     <span className="text-muted">Monthly</span>
                                 </div>
                                 <div className="mb-4">
