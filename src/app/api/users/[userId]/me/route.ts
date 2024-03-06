@@ -1,16 +1,17 @@
+import { openDB } from "@/app/utils/db"
+import { UserType } from "@/app/utils/useUser"
 import { NextRequest } from "next/server"
 
-export async function GET(request: NextRequest,  { params }: { params: { userId: string } }) {
-    const searchParams = request.nextUrl.searchParams
-    const query = searchParams.get('query')
-    // const res = await fetch('https://data.mongodb-api.com/...', {
-    //   next: { revalidate: 60 }, // Revalidate every 60 seconds
-    // })
-    // const data = await res.json()
-   
-    // return Response.json(data)
+export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
+  const db = await openDB()
+  const data = await db.all('SELECT * FROM users where id = ?', params.userId)
 
-
-    // for Stream responses visit: https://nextjs.org/docs/app/building-your-application/routing/route-handlers#streaming
-    return Response.json({text: "questo sono io", pathname: request.url, userId: params.userId, query: query})
+  const user: UserType = {
+    id: data[0].id,
+    email: data[0].user_email,
+    nickname: data[0].nickname,
+    subscriptionId: data[0].payment_subscription_id
   }
+
+  return Response.json(user)
+}

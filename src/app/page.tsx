@@ -6,13 +6,20 @@ import { Dashboard } from "./components/home/dashboard";
 
 export default function Home() {
 
-  const { data: session } = useSession()
+  const { data: session, status } = useSession()
 
-  return session?.user ? (
-    <main>
+  if (status === 'loading') {
+    return <main>
+      Loading
+    </main>
+  }
+
+  if (status === 'authenticated')
+    return <main>
       <Dashboard />
     </main>
-  ) : <div>
+
+  return <div>
     <HeroSection />
   </div>
 }

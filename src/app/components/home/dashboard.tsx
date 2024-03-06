@@ -1,13 +1,34 @@
 import { signOut, useSession } from "next-auth/react"
-import LoginButton from "../login-button";
-import { loadStripe } from "@stripe/stripe-js";
+import LoginButton from "../login-button"
+import { loadStripe } from "@stripe/stripe-js"
+import useUser, { UserType } from "@/app/utils/useUser"
 
 const proItemId = process.env.NEXT_PUBLIC_PRO_SUBSCRIPTION!
 const premiumItemId = process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIPTION!
 
 export const Dashboard = () => {
+    const { data: userSession } = useSession()
 
-    const { data: session } = useSession()
+    if (!userSession?.user?.email)
+        return <div>Something went wrong</div>
+
+    const { isError, isLoading, data: profile } = useUser(userSession?.user?.email)
+
+    if (isError)
+        return <div>Something went wrong</div>
+
+    if (isLoading) {
+        return (
+            <>Loading</>
+            // <div className="preloader">
+            //     <img src="./dist/media/img/logo-2x.png" alt="logo" />
+            //     <p className="lead font-weight-bold text-muted my-5">Loading Tinno Chat App ...</p>
+            //     <div className="spinner-border" role="status">
+            //         <span className="sr-only">Loading...</span>
+            //     </div>
+            // </div>
+        )
+    }
 
     const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
     const createCheckOutSession = async (itemId: String) => {
@@ -21,25 +42,44 @@ export const Dashboard = () => {
             body: JSON.stringify({
                 itemId
             }),
-        });
+        })
         if (!stripe || stripe === null) {
-            alert("Something wrong with payment, retry later");
+            alert("Something wrong with payment, retry later")
         }
 
         const sessionId = (await checkoutSession.json()).id
 
-        console.log(sessionId)
+        try {
 
-        //TODO:  save sessionId to userId into database!!!!!!!!!!
-        const result = await stripe!.redirectToCheckout({
-            sessionId,
-        });
+            const saveSession = await fetch("/api/users/" + userSession?.user?.email! + "/payment/session", {
+                method: "POST",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    sessionId: sessionId
+                }),
+            })
 
-        if (result.error) {
-            alert(result.error.message);
+            if (saveSession.status != 200) {
+                console.error(saveSession)
+                alert(saveSession)
+            }
+
+            const result = await stripe!.redirectToCheckout({
+                sessionId,
+            });
+
+            if (result.error) {
+                alert(result.error.message)
+            }
+        } catch (error) {
+            alert(error)
         }
+
         // setLoading(false);
-    };
+    }
+
     return (
         <>
             {/* <!-- Favicon --> */}
@@ -71,6 +111,7 @@ export const Dashboard = () => {
                     <div className="navbar-brand">
                         <LoginButton />
                     </div>
+                    <p>{profile.subscriptionId}------------------------------------</p>
                     <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
                         aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
                         <span className="navbar-toggler-icon"></span>

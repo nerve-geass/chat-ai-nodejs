@@ -1,13 +1,6 @@
-import { useSession, signIn, signOut } from "next-auth/react"
-import { Dialog, Transition } from '@headlessui/react'
-import { ExclamationTriangleIcon } from '@heroicons/react/24/outline'
-import { Fragment, useRef, useState } from "react";
-
+import { signIn } from "next-auth/react"
 
 export const HeroSection = () => {
-    const [open, setOpen] = useState(true)
-
-    const cancelButtonRef = useRef(null)
 
     return (
         <>
@@ -38,60 +31,8 @@ export const HeroSection = () => {
             <nav className="navbar fixed-top bg-white navbar-expand-lg navbar-light">
                 <div className="container-fluid">
                     <a className="navbar-brand" href="./index.html">
-                        {/* <img src="./dist/media/img/logo-full.png" alt="logo" /> */}
+                        <img src="./dist/media/img/logo-full.png" alt="logo" />
                     </a>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav ml-auto">
-                            <li className="nav-item active">
-                                <a className="nav-link" href="./index.html">Home</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" target="_blank" href="chat.html">Chat</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="./features.html">Features</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Auth</a>
-                                <ul className="navbar-nav">
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./login.html">Login</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./register.html">Register</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./reset-password.html">Reset Password</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./lock-screen.html">Lock Screen</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./phone-code.html">Phone Code</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Pages</a>
-                                <ul className="navbar-nav">
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="./pricing.html">Pricing</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="./contact.html">Contact</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./email-template.html">Email Template</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <a href="#" className="btn btn-primary ml-auto">Buy Now</a>
-                    </div>
                 </div>
             </nav>
 
