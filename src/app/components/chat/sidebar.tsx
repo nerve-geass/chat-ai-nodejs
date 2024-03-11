@@ -1,71 +1,6 @@
 export default function SideBar() {
     return (<>
         <div id="chats" className="left-sidebar open">
-            <div className="left-sidebar-header">
-                <div className="story-block">
-                    <h4 className="mb-4">Stories</h4>
-                    <div className="story-items mb-4" data-intro-js="4">
-                        <div className="story-item">
-                            <a href="#" className="avatar avatar-border-primary">
-                                <span className="avatar-title bg-info rounded-circle">M</span>
-                                <span className="story-content">Matteo Reedy</span>
-                            </a>
-                        </div>
-                        <div className="story-item">
-                            <a href="#" className="avatar avatar-border-success">
-                                <img src="./dist/media/img/avatar6.jpg" className="rounded-circle" alt="image" />
-                                <span className="story-content">Meredith Dyet</span>
-                            </a>
-                        </div>
-                        <div className="story-item">
-                            <a href="#" className="avatar avatar-border-primary">
-                                <span className="avatar-title bg-success rounded-circle">C</span>
-                                <span className="story-content">Cesar Weems</span>
-                            </a>
-                        </div>
-                        <div className="story-item">
-                            <a href="#" className="avatar">
-                                <img src="./dist/media/img/avatar2.jpg" className="rounded-circle" alt="image" />
-                                <span className="story-content">Pansy Coghill</span>
-                            </a>
-                        </div>
-                        <div className="story-item">
-                            <a href="#" className="avatar">
-                                <img src="./dist/media/img/avatar7.jpg" className="rounded-circle" alt="image" />
-                                <span className="story-content">Cullen Scyone</span>
-                            </a>
-                        </div>
-                        <div className="story-item">
-                            <a href="#" className="avatar">
-                                <img src="./dist/media/img/avatar1.jpg" className="rounded-circle" alt="image" />
-                                <span className="story-content">North Boorer</span>
-                            </a>
-                        </div>
-                        <div className="story-item">
-                            <a href="#" className="avatar">
-                                <img src="./dist/media/img/avatar9.jpg" className="rounded-circle" alt="image" />
-                                <span className="story-content">Dilan Maasze</span>
-                            </a>
-                        </div>
-                        <div className="story-item">
-                            <a href="#" className="avatar">
-                                <img src="./dist/media/img/avatar5.jpg" className="rounded-circle" alt="image" />
-                                <span className="story-content">Antons Cornier</span>
-                            </a>
-                        </div>
-                    </div>
-                </div>
-                <form>
-                    <div className="input-group">
-                        <div className="input-group-prepend">
-                            <button className="btn" type="button">
-                                <i className="ti-search"></i>
-                            </button>
-                        </div>
-                        <input type="text" className="form-control" placeholder="Search chats" />
-                    </div>
-                </form>
-            </div>
             <div className="left-sidebar-content">
                 <ul className="list-group list-group-flush">
                     <li className="list-group-item active">
@@ -761,10 +696,7 @@ export default function SideBar() {
         <div className="modal fade" id="intiveUsers" tabIndex={-1} role="dialog" aria-hidden="true">
             <div className="modal-dialog modal-dialog-centered modal-dialog-zoom" role="document">
                 <div className="modal-content">
-                    <div className="modal-header">
-                        <h5 className="modal-title">
-                            <i className="mdi mdi-account-plus-outline"></i> Invite users
-                        </h5>
+                    <div className="modal-header">  
                         <button type="button" className="close" data-dismiss="modal" aria-label="Close">
                             <i className="mdi mdi-close"></i>
                         </button>

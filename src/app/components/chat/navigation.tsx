@@ -1,3 +1,5 @@
+import { signOut } from "next-auth/react";
+
 export default function ChatNavigation() {
     return (
         <nav className="navigation">
@@ -14,8 +16,6 @@ export default function ChatNavigation() {
                         </a>
                         <div className="dropdown-menu dropdown-menu-right">
                             <a href="#" className="dropdown-item" data-left-sidebar="friends">Start Chat</a>
-                            <a href="#" className="dropdown-item" data-toggle="modal" data-target="#newGroup">Add Group</a>
-                            <a href="#" className="dropdown-item" data-toggle="modal" data-target="#intiveUsers">Invite users</a>
                         </div>
                     </li>
                     <li>
@@ -23,25 +23,6 @@ export default function ChatNavigation() {
                             title="Chats" data-placement="right">
                             <span className="badge badge-warning"></span>
                             <i data-feather="message-circle"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a data-left-sidebar="friends" href="#" data-toggle="tooltip"
-                            title="Friends" data-placement="right">
-                            <span className="badge badge-danger"></span>
-                            <i data-feather="user"></i>
-                        </a>
-                    </li>
-                    <li>
-                        <a data-left-sidebar="favorites" data-toggle="tooltip" title="Favorites" data-placement="right"
-                            href="#">
-                            <i data-feather="star"></i>
-                        </a>
-                    </li>
-                    <li className="brackets">
-                        <a data-left-sidebar="archived" href="#" data-toggle="tooltip"
-                            title="Archived" data-placement="right">
-                            <i data-feather="archive"></i>
                         </a>
                     </li>
                     <li className="d-none d-lg-block" data-toggle="tooltip" title="Settings" data-placement="right">
@@ -60,9 +41,8 @@ export default function ChatNavigation() {
                                 profile</a>
                             <a href="#" className="dropdown-item" data-right-sidebar="user-profile">Profile</a>
                             <a href="#" className="dropdown-item" data-toggle="modal" data-target="#settingsModal">Settings</a>
-                            <a href="#" className="dropdown-item d-none d-md-block example-app-tour-start">Start Tour</a>
                             <div className="dropdown-divider"></div>
-                            <a href="login.html" className="dropdown-item text-danger">Logout</a>
+                            <a onClick={() => signOut()} className="dropdown-item text-danger">Logout</a>
                         </div>
                     </li>
                 </ul>

@@ -7,30 +7,11 @@ export const HeroSection = () => {
             {/* <!-- Favicon --> */}
             <link rel="icon" href="./dist/media/img/favicon.png" type="image/png" />
 
-            {/* <!-- Google Nunito font --> */}
-            <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700&display=swap" rel="stylesheet" />
-
-            {/* <!-- Material design icons --> */}
-            <link href="./dist/icons/materialicons/css/materialdesignicons.min.css" rel="stylesheet" />
-
-            {/* <!-- Bundle styles --> */}
-            <link rel="stylesheet" href="dist/vendor/bundle.css" />
-
-            {/* <!-- Slick --> */}
-            <link rel="stylesheet" href="dist/vendor/slick/slick-theme.css" />
-            <link rel="stylesheet" href="dist/vendor/slick/slick.css" />
-
-            {/* <!-- Fancybox --> */}
-            <link rel="stylesheet" href="dist/vendor/fancybox/jquery.fancybox.min.css" type="text/css" />
-
-            {/* <!-- Aos animate --> */}
-            {/* <link rel="stylesheet" href="dist/vendor/aos/aos.css" type="text/css" /> */}
-
             {/* <!-- Landing page styles --> */}
             <link rel="stylesheet" href="./dist/css/landing-page.min.css"></link>
             <nav className="navbar fixed-top bg-white navbar-expand-lg navbar-light">
                 <div className="container-fluid">
-                    <a className="navbar-brand" href="./index.html">
+                    <a className="navbar-brand" href="./">
                         <img src="./dist/media/img/logo-full.png" alt="logo" />
                     </a>
                 </div>
@@ -710,20 +691,6 @@ export const HeroSection = () => {
                     </div>
                 </div>
             </footer>
-            {/* <!-- Bundle scripts --> */}
-            <script src="dist/vendor/bundle.js"></script>
-
-            {/* <!-- Slick --> */}
-            <script src="dist/vendor/slick/slick.min.js"></script>
-
-            {/* <!-- Fancybox --> */}
-            <script src="dist/vendor/fancybox/jquery.fancybox.min.js"></script>
-
-            {/* <!-- Aos animate --> */}
-            {/* <script src="dist/vendor/aos/aos.js"></script> */}
-
-            {/* <!-- Landing page scripts --> */}
-            {/* <script src="./dist/js/landing-page.min.js"></script> */}
         </>
     );
 };

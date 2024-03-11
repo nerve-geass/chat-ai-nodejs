@@ -2188,7 +2188,7 @@ nav.navigation ul {
     margin-bottom: .8rem; }
 
 .layout {
-  height: 100vh;
+  height: 85vh;
   display: flex; }
   .layout .content {
     display: flex;

@@ -2,6 +2,8 @@ import { signOut, useSession } from "next-auth/react"
 import LoginButton from "../login-button"
 import { loadStripe } from "@stripe/stripe-js"
 import useUser, { UserType } from "@/app/utils/useUser"
+import path from "path"
+import HeaderNav from "../header"
 
 const proItemId = process.env.NEXT_PUBLIC_PRO_SUBSCRIPTION!
 const premiumItemId = process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIPTION!
@@ -82,90 +84,7 @@ export const Dashboard = () => {
 
     return (
         <>
-            {/* <!-- Favicon --> */}
-            <link rel="icon" href="./dist/media/img/favicon.png" type="image/png" />
-
-            {/* <!-- Google Nunito font --> */}
-            <link href="https://fonts.googleapis.com/css2?family=Nunito:wght@200;300;400;600;700&display=swap" rel="stylesheet" />
-
-            {/* <!-- Material design icons --> */}
-            <link href="./dist/icons/materialicons/css/materialdesignicons.min.css" rel="stylesheet" />
-
-            {/* <!-- Bundle styles --> */}
-            <link rel="stylesheet" href="dist/vendor/bundle.css" />
-
-            {/* <!-- Slick --> */}
-            <link rel="stylesheet" href="dist/vendor/slick/slick-theme.css" />
-            <link rel="stylesheet" href="dist/vendor/slick/slick.css" />
-
-            {/* <!-- Fancybox --> */}
-            <link rel="stylesheet" href="dist/vendor/fancybox/jquery.fancybox.min.css" type="text/css" />
-
-            {/* <!-- Aos animate --> */}
-            {/* <link rel="stylesheet" href="dist/vendor/aos/aos.css" type="text/css" /> */}
-
-            {/* <!-- Landing page styles --> */}
-            <link rel="stylesheet" href="./dist/css/landing-page.min.css"></link>
-            <nav className="navbar fixed-top bg-white navbar-expand-lg navbar-light">
-                <div className="container-fluid">
-                    <div className="navbar-brand">
-                        <LoginButton />
-                    </div>
-                    <p>{profile.subscriptionId}------------------------------------</p>
-                    <button className="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav"
-                        aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
-                        <span className="navbar-toggler-icon"></span>
-                    </button>
-                    <div className="collapse navbar-collapse" id="navbarNav">
-                        <ul className="navbar-nav ml-auto">
-                            <li className="nav-item active">
-                                <a className="nav-link" href="./index.html">Home</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="/chat">Chat</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="./features.html">Features</a>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Auth</a>
-                                <ul className="navbar-nav">
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./login.html">Login</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./register.html">Register</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./reset-password.html">Reset Password</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./lock-screen.html">Lock Screen</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./phone-code.html">Phone Code</a>
-                                    </li>
-                                </ul>
-                            </li>
-                            <li className="nav-item">
-                                <a className="nav-link" href="#">Pages</a>
-                                <ul className="navbar-nav">
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="./pricing.html">Pricing</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" href="./contact.html">Contact</a>
-                                    </li>
-                                    <li className="nav-item">
-                                        <a className="nav-link" target="_blank" href="./email-template.html">Email Template</a>
-                                    </li>
-                                </ul>
-                            </li>
-                        </ul>
-                        <a onClick={() => signOut()} className="btn btn-primary ml-auto">Log out</a>
-                    </div>
-                </div>
-            </nav>
+            <HeaderNav />
 
             <section className="py-8">
                 <div className="container">
