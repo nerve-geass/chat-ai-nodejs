@@ -3,7 +3,7 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth/next";
 import { authOptions } from "./api/auth/[...nextauth]/route"
-import SessionWrapper from "./components/session-wapper";
+import SessionWrapper from "../components/session-wapper";
 
 import '../../public/dist/icons/themify/themify-icons.css'
 import '../../public/dist/icons/materialicons/css/materialdesignicons.min.css'
@@ -56,9 +56,6 @@ export default async function RootLayout({
 
         {/* <!-- App Scripts --> */}
         <Script src="./dist/js/app.min.js"></Script>
-
-        {/* <!-- Examples --> */}
-        <Script src="./dist/js/examples.min.js"></Script>
       </html>
     </SessionWrapper>
   );

@@ -1,4 +1,4 @@
-import { openDB } from "@/app/utils/db"
+import { openDB } from "@/utils/db"
 import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest, { params }: { params: { userId: string } }) {

@@ -1,7 +1,7 @@
 import { signOut, useSession } from "next-auth/react"
 import LoginButton from "../login-button"
 import { loadStripe } from "@stripe/stripe-js"
-import useUser, { UserType } from "@/app/utils/useUser"
+import useUser, { UserType } from "@/utils/useUser"
 import path from "path"
 import HeaderNav from "../header"
 
@@ -21,14 +21,13 @@ export const Dashboard = () => {
 
     if (isLoading) {
         return (
-            <>Loading</>
-            // <div className="preloader">
-            //     <img src="./dist/media/img/logo-2x.png" alt="logo" />
-            //     <p className="lead font-weight-bold text-muted my-5">Loading Tinno Chat App ...</p>
-            //     <div className="spinner-border" role="status">
-            //         <span className="sr-only">Loading...</span>
-            //     </div>
-            // </div>
+            <div className="preloader">
+                <img src="./dist/media/img/logo-2x.png" alt="logo" />
+                <p className="lead font-weight-bold text-muted my-5">Loading Tinno Chat App ...</p>
+                <div className="spinner-border" role="status">
+                    <span className="sr-only">Loading...</span>
+                </div>
+            </div>
         )
     }
 

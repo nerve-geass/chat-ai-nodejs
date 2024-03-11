@@ -1,5 +1,5 @@
-import { openDB } from "@/app/utils/db"
-import { UserType } from "@/app/utils/useUser"
+import { openDB } from "@/utils/db"
+import { UserType } from "@/utils/useUser"
 import { NextRequest } from "next/server"
 
 export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {

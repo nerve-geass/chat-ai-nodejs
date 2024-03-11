@@ -1,6 +1,6 @@
 import NextAuth from "next-auth"
 import Auth0 from "next-auth/providers/auth0"
-import { openDB } from '../../../utils/db';
+import { openDB } from '../../../../utils/db';
 
 export const authOptions = { 
     // Configure one or more authentication providers

@@ -1,8 +1,8 @@
 'use client'
 
 import { useSession } from "next-auth/react";
-import { HeroSection } from "./components/home/home";
-import { Dashboard } from "./components/home/dashboard";
+import { HeroSection } from "../components/home/home";
+import { Dashboard } from "../components/home/dashboard";
 
 export default function Home() {
 

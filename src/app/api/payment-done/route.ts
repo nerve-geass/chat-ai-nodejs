@@ -1,4 +1,4 @@
-import { openDB } from "@/app/utils/db";
+import { openDB } from "@/utils/db";
 import { NextRequest } from "next/server"
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);

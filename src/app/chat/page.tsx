@@ -2,18 +2,24 @@
 
 import { signOut, useSession } from "next-auth/react";
 import Link from "next/link";
-import LoginButton from "../components/login-button";
-import ChatNavigation from "../components/chat/navigation";
-import SideBar from "../components/chat/sidebar";
-import ChatBox from "../components/chat/chatbox";
-import Notifications from "../components/chat/notifications";
-import UserProfile from "../components/chat/userprofile";
-import Settings from "../components/chat/settings";
-import Disconnected from "../components/chat/disconnected";
-import VoiceCallModal from "../components/chat/voicecallmodal";
-import HeaderNav from "../components/header";
+import LoginButton from "../../components/login-button";
+import ChatNavigation from "../../components/chat/navigation";
+import { SideBar } from "../../components/chat/sidebar";
+import { ChatBox } from "../../components/chat/chatbox";
+import Notifications from "../../components/chat/notifications";
+import UserProfile from "../../components/chat/userprofile";
+import Settings from "../../components/chat/settings";
+import Disconnected from "../../components/chat/disconnected";
+import VoiceCallModal from "../../components/chat/voicecallmodal";
+import HeaderNav from "../../components/header";
+import { useSearchParams } from "next/navigation";
+import { AiGirlfriend } from "@/models/ai-girlfriend";
 
 export default function Chat() {
+    const query = useSearchParams()
+
+    const modelChat: string = query.get('chatId') === null ? AiGirlfriend[0].name : query.get('chatId')!
+
     const { data: session } = useSession()
 
     return (
@@ -27,11 +33,30 @@ export default function Chat() {
                     {/* <!-- ./ navigation --> */}
 
                     {/* <!-- Chat left sidebar --> */}
-                    <SideBar />
+                    <SideBar modelChat={modelChat} />
                     {/* <!-- ./ Chat left sidebar --> */}
 
                     {/* <!-- chat --> */}
-                    <ChatBox />
+                    <ChatBox conversation={[
+                        {
+                            avatar: "./dist/media/img/avatar6.jpg",
+                            name: modelChat,
+                            text: "Hello darling!",
+                            type: "in"
+                        },
+                        {
+                            avatar: "./dist/media/img/avatar6.jpg",
+                            name: modelChat,
+                            text: "How do you feel today? I want to ask you something.",
+                            type: "in"
+                        },
+                        {
+                            avatar: "./dist/media/img/avatar6.jpg",
+                            name: "me",
+                            text: "I feel good thanks my love!.",
+                            type: "out"
+                        }
+                    ]} />
                     {/* <!-- ./ chat --> */}
 
                     {/* <!-- ./ layout --> */}
