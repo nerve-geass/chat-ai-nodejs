@@ -14,6 +14,7 @@ import VoiceCallModal from "../../components/chat/voicecallmodal";
 import HeaderNav from "../../components/header";
 import { useSearchParams } from "next/navigation";
 import { AiGirlfriend } from "@/models/ai-girlfriend";
+import Image from "next/image";
 
 export default function Chat() {
     const query = useSearchParams()
@@ -124,7 +125,7 @@ export default function Chat() {
                                     <ul className="list-group list-group-unlined">
                                         <li className="list-group-item px-0 d-flex">
                                             <figure className="avatar mr-3">
-                                                <img src="./dist/media/img/avatar4.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="./dist/media/img/avatar4.jpg" className="rounded-circle" alt="image" />
                                             </figure>
                                             <div>
                                                 <div>Amanda Harvey</div>
@@ -148,7 +149,7 @@ export default function Chat() {
                                         </li>
                                         <li className="list-group-item px-0 d-flex">
                                             <figure className="avatar mr-3">
-                                                <img src="./dist/media/img/avatar10.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="./dist/media/img/avatar10.jpg" className="rounded-circle" alt="image" />
                                             </figure>
                                             <div>
                                                 <div>Ella Lauda</div>
@@ -241,13 +242,13 @@ export default function Chat() {
                                                 <span className="avatar-title bg-success rounded-circle">T</span>
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Cloe Jeayes">
-                                                <img src="./dist/media/img/avatar8.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="./dist/media/img/avatar8.jpg" className="rounded-circle" alt="image" />
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Marlee Perazzo">
                                                 <span className="avatar-title bg-warning rounded-circle">M</span>
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Stafford Pioch">
-                                                <img src="./dist/media/img/avatar1.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="./dist/media/img/avatar1.jpg" className="rounded-circle" alt="image" />
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Bethena Langsdon">
                                                 <span className="avatar-title bg-info rounded-circle">B</span>
@@ -275,7 +276,7 @@ export default function Chat() {
                                                     <li className="list-group-item d-flex align-items-center px-0">
                                                         <div className="mr-2">
                                                             <figure className="avatar avatar-sm">
-                                                                <img src="./dist/media/img/avatar1.jpg"
+                                                                <Image src="./dist/media/img/avatar1.jpg"
                                                                     className="rounded-circle" alt="image" />
                                                             </figure>
                                                         </div>
@@ -457,7 +458,7 @@ export default function Chat() {
                                                 <div className="d-flex align-items-center">
                                                     <div>
                                                         <figure className="avatar mr-3 item-rtl">
-                                                            <img src="./dist/media/img/avatar4.jpg" className="rounded-circle"
+                                                            <Image src="./dist/media/img/avatar4.jpg" className="rounded-circle"
                                                                 alt="image" />
                                                         </figure>
                                                     </div>

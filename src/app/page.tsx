@@ -14,9 +14,9 @@ export default function Home() {
     </main>
   }
 
-  if (status === 'authenticated')
+  if (status === 'authenticated' && session !== null)
     return <main>
-      <Dashboard />
+      <Dashboard session={session} />
     </main>
 
   return <div>

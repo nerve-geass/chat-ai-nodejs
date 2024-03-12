@@ -4,17 +4,17 @@ import { loadStripe } from "@stripe/stripe-js"
 import useUser, { UserType } from "@/utils/useUser"
 import path from "path"
 import HeaderNav from "../header"
+import { Session } from "next-auth"
 
 const proItemId = process.env.NEXT_PUBLIC_PRO_SUBSCRIPTION!
 const premiumItemId = process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIPTION!
 
-export const Dashboard = () => {
-    const { data: userSession } = useSession()
+export const Dashboard = ({session}: {session: Session}) => {
+    const { isError, isLoading, data: profile } = useUser(session.user?.email!)
 
-    if (!userSession?.user?.email)
+    if (!session?.user?.email)
         return <div>Something went wrong</div>
 
-    const { isError, isLoading, data: profile } = useUser(userSession?.user?.email)
 
     if (isError)
         return <div>Something went wrong</div>
@@ -52,7 +52,7 @@ export const Dashboard = () => {
 
         try {
 
-            const saveSession = await fetch("/api/users/" + userSession?.user?.email! + "/payment/session", {
+            const saveSession = await fetch("/api/users/" + session?.user?.email! + "/payment/session", {
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",

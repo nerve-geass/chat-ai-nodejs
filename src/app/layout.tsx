@@ -2,7 +2,6 @@ import type { Metadata } from "next";
 import { Inter } from "next/font/google";
 import "./globals.css";
 import { getServerSession } from "next-auth/next";
-import { authOptions } from "./api/auth/[...nextauth]/route"
 import SessionWrapper from "../components/session-wapper";
 
 import '../../public/dist/icons/themify/themify-icons.css'
@@ -14,6 +13,7 @@ import '../../public/dist/vendor/fancybox/jquery.fancybox.min.css'
 import '../../public/dist/css/app.css'
 import '../../public/dist/css/landing-page.css'
 import Script from "next/script";
+import { authOptions } from "./api/auth/[...nextauth]/auth-options";
 
 const inter = Inter({ subsets: ["latin"] });
 
