@@ -1,4 +1,17 @@
-export const AiGirlfriend = [
+export type AiGirlfriendType = {
+    name: string
+    description: string
+    prompt: string
+    model: string
+    temperature: number
+    max_tokens: number
+    top_p: number
+    stream: boolean
+    stop: string | null
+}
+
+
+export const AiGirlfriend: AiGirlfriendType[] = [
     {
         name: "Jennifer",
         description: "Horny and sexy",

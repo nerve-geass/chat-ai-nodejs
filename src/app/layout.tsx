@@ -11,9 +11,8 @@ import '../../public/dist/vendor/bundle.css'
 import '../../public/dist/vendor/slick/slick-theme.css'
 import '../../public/dist/vendor/slick/slick.css'
 import '../../public/dist/vendor/fancybox/jquery.fancybox.min.css'
-import '../../public/dist/vendor/introjs/introjs.css'
 import '../../public/dist/css/app.css'
-import '../../public/dist/css/landing-page.min.css'
+import '../../public/dist/css/landing-page.css'
 import Script from "next/script";
 
 const inter = Inter({ subsets: ["latin"] });
@@ -44,9 +43,6 @@ export default async function RootLayout({
 
         {/* <!-- Fancybox --> */}
         <Script src="dist/vendor/fancybox/jquery.fancybox.min.js"></Script>
-
-        {/* <!-- Intro js --> */}
-        <Script src="dist/vendor/introjs/intro.js"></Script>
 
         {/* <!-- Jquery Stopwatch --> */}
         <Script src="dist/vendor/jquery.stopwatch.js"></Script>

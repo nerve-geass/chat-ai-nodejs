@@ -22,6 +22,8 @@ export default function Chat() {
 
     const { data: session } = useSession()
 
+    const modelCharacter = AiGirlfriend.filter((model) => model.name == modelChat)
+
     return (
         <>
             <HeaderNav />
@@ -56,7 +58,9 @@ export default function Chat() {
                             text: "I feel good thanks my love!.",
                             type: "out"
                         }
-                    ]} />
+                    ]} 
+                    model={modelCharacter[0]}
+                    />
                     {/* <!-- ./ chat --> */}
 
                     {/* <!-- ./ layout --> */}

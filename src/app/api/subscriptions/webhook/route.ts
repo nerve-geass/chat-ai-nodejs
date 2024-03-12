@@ -1,6 +1,6 @@
 import { NextRequest, NextResponse } from "next/server"
 
-export const config = {  api: {    bodyParser: false,  },};
+// export const config = {  api: {    bodyParser: false,  },};
 
 const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 export async function POST(req: NextRequest, res: NextResponse) {
