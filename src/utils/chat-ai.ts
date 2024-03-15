@@ -1,25 +1,18 @@
 
 import { ConversationType } from "@/components/chat/chatbox"
 import { AiGirlfriendType } from "@/models/ai-girlfriend"
-import Groq from 'groq-sdk'
+import { UserType } from "./useUser";
 
-export const useChatAIUtils = (model: AiGirlfriendType) => {
-
-
-
-    // const groq = new Groq({ apiKey: grokToken })
-
+export function useChatAIUtils(user: UserType, model: AiGirlfriendType) {
     var myHeaders = new Headers();
-    myHeaders.append("Content-Type", "application/json")
+    myHeaders.append("Content-Type", "application/json");
 
-
-    console.log(process.env.GROQ_API_KEY)
     const generateImageAi = () => {
-        fetch("/api/chat/image", {method: 'POST', headers: myHeaders})
+        fetch("/api/users/" + user.id + "/chats/" + model.name + "/image", { method: 'POST', headers: myHeaders })
             .then(response => response.text())
             .then(result => console.log(result))
             .catch(error => console.log('error', error));
-    }
+    };
 
     const generateVoiceAi = (text: string) => {
 
@@ -48,11 +41,30 @@ export const useChatAIUtils = (model: AiGirlfriendType) => {
             .then(response => response.json())
             .then(response => console.log(response))
             .catch(err => console.error(err));
-    }
+    };
 
-    const chatCompletion = (conversation: ConversationType[]) => {
+    const chatCompletion = async (conversation: ConversationType[]) => {
+        const chatCompletionResponse = await fetch("/api/users/" + user.id + "/chats/" + model.name + "/completion", {
+            method: 'POST', headers: myHeaders, body: JSON.stringify({
+                messages: conversation
+            })
+        });
 
-    }
+        if (chatCompletionResponse.status != 200) {
+            alert("Error in chatcompletion");
+            console.error(await chatCompletionResponse.json());
+        }
 
-    return { generateImageAi, generateVoiceAi, chatCompletion }
+        const chatCompletionText = await chatCompletionResponse.text();
+
+        return {
+            type: 'in',
+            text: chatCompletionText,
+            image: null,
+            avatar: model.avatar,
+            name: model.name
+        } as ConversationType;
+    };
+
+    return { generateImageAi, generateVoiceAi, chatCompletion };
 }

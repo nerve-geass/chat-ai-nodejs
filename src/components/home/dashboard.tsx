@@ -1,10 +1,8 @@
-import { signOut, useSession } from "next-auth/react"
-import LoginButton from "../login-button"
 import { loadStripe } from "@stripe/stripe-js"
-import useUser, { UserType } from "@/utils/useUser"
-import path from "path"
+import useUser from "@/utils/useUser"
 import HeaderNav from "../header"
 import { Session } from "next-auth"
+import Loader from "../loader"
 
 const proItemId = process.env.NEXT_PUBLIC_PRO_SUBSCRIPTION!
 const premiumItemId = process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIPTION!
@@ -20,15 +18,7 @@ export const Dashboard = ({session}: {session: Session}) => {
         return <div>Something went wrong</div>
 
     if (isLoading) {
-        return (
-            <div className="preloader">
-                <img src="./dist/media/img/logo-2x.png" alt="logo" />
-                <p className="lead font-weight-bold text-muted my-5">Loading Tinno Chat App ...</p>
-                <div className="spinner-border" role="status">
-                    <span className="sr-only">Loading...</span>
-                </div>
-            </div>
-        )
+        return <Loader />
     }
 
     const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);

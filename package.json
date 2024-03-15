@@ -7,7 +7,7 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "seed": "tsx src/app/utils/seed.ts"
+    "seed": "tsx src/utils/seed.ts"
   },
   "dependencies": {
     "@fortawesome/free-brands-svg-icons": "^6.5.1",

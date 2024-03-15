@@ -1,10 +1,10 @@
 import useSWR from 'swr'
 
 export type UserType = {
-    id: String
-    email: String
-    nickname: String
-    subscriptionId: String | null
+    id: string
+    email: string
+    nickname: string
+    subscriptionId: string | null
 }
 
 export default function useUser(id: String): { data: UserType, isLoading: boolean, isError: boolean } {

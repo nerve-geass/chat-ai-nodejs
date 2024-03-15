@@ -1,8 +1,6 @@
 'use client'
 
-import { signOut, useSession } from "next-auth/react";
-import Link from "next/link";
-import LoginButton from "../../components/login-button";
+import { useSession } from "next-auth/react";
 import ChatNavigation from "../../components/chat/navigation";
 import { SideBar } from "../../components/chat/sidebar";
 import { ChatBox } from "../../components/chat/chatbox";
@@ -15,13 +13,18 @@ import HeaderNav from "../../components/header";
 import { useSearchParams } from "next/navigation";
 import { AiGirlfriend } from "@/models/ai-girlfriend";
 import Image from "next/image";
+import Loader from "@/components/loader";
 
 export default function Chat() {
     const query = useSearchParams()
 
     const modelChat: string = query.get('chatId') === null ? AiGirlfriend[0].name : query.get('chatId')!
 
-    const { data: session } = useSession()
+    const { data: session, status } = useSession()
+
+    if (status === "loading") {
+        return <Loader />
+    }
 
     const modelCharacter = AiGirlfriend.filter((model) => model.name == modelChat)
 
@@ -40,27 +43,7 @@ export default function Chat() {
                     {/* <!-- ./ Chat left sidebar --> */}
 
                     {/* <!-- chat --> */}
-                    <ChatBox conversation={[
-                        {
-                            avatar: "./dist/media/img/avatar6.jpg",
-                            name: modelChat,
-                            text: "Hello darling!",
-                            type: "in"
-                        },
-                        {
-                            avatar: "./dist/media/img/avatar6.jpg",
-                            name: modelChat,
-                            text: "How do you feel today? I want to ask you something.",
-                            type: "in"
-                        },
-                        {
-                            avatar: "./dist/media/img/avatar6.jpg",
-                            name: "me",
-                            text: "I feel good thanks my love!.",
-                            type: "out"
-                        }
-                    ]} 
-                    model={modelCharacter[0]}
+                    <ChatBox session={session!} model={modelCharacter[0]}
                     />
                     {/* <!-- ./ chat --> */}
 
@@ -125,7 +108,7 @@ export default function Chat() {
                                     <ul className="list-group list-group-unlined">
                                         <li className="list-group-item px-0 d-flex">
                                             <figure className="avatar mr-3">
-                                                <Image src="./dist/media/img/avatar4.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="/dist/media/img/avatar4.jpg" className="rounded-circle" alt="image" width={128} height={128} />
                                             </figure>
                                             <div>
                                                 <div>Amanda Harvey</div>
@@ -149,7 +132,7 @@ export default function Chat() {
                                         </li>
                                         <li className="list-group-item px-0 d-flex">
                                             <figure className="avatar mr-3">
-                                                <Image src="./dist/media/img/avatar10.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="/dist/media/img/avatar10.jpg" className="rounded-circle" alt="image" width={128} height={128} />
                                             </figure>
                                             <div>
                                                 <div>Ella Lauda</div>
@@ -242,13 +225,13 @@ export default function Chat() {
                                                 <span className="avatar-title bg-success rounded-circle">T</span>
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Cloe Jeayes">
-                                                <Image src="./dist/media/img/avatar8.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="/dist/media/img/avatar8.jpg" className="rounded-circle" alt="image" width={128} height={128} />
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Marlee Perazzo">
                                                 <span className="avatar-title bg-warning rounded-circle">M</span>
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Stafford Pioch">
-                                                <Image src="./dist/media/img/avatar1.jpg" className="rounded-circle" alt="image" />
+                                                <Image src="/dist/media/img/avatar1.jpg" className="rounded-circle" alt="image" width={128} height={128} />
                                             </figure>
                                             <figure className="avatar" data-toggle="tooltip" title="Bethena Langsdon">
                                                 <span className="avatar-title bg-info rounded-circle">B</span>
@@ -276,8 +259,8 @@ export default function Chat() {
                                                     <li className="list-group-item d-flex align-items-center px-0">
                                                         <div className="mr-2">
                                                             <figure className="avatar avatar-sm">
-                                                                <Image src="./dist/media/img/avatar1.jpg"
-                                                                    className="rounded-circle" alt="image" />
+                                                                <Image src="/dist/media/img/avatar1.jpg"
+                                                                    className="rounded-circle" alt="image" width={128} height={128} />
                                                             </figure>
                                                         </div>
                                                         <div>Forest Kroch</div>
@@ -458,8 +441,8 @@ export default function Chat() {
                                                 <div className="d-flex align-items-center">
                                                     <div>
                                                         <figure className="avatar mr-3 item-rtl">
-                                                            <Image src="./dist/media/img/avatar4.jpg" className="rounded-circle"
-                                                                alt="image" />
+                                                            <Image src="/dist/media/img/avatar4.jpg" className="rounded-circle"
+                                                                alt="image" width={128} height={128} />
                                                         </figure>
                                                     </div>
                                                     <div className="custom-file">

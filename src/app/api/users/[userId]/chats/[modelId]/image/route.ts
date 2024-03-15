@@ -33,6 +33,7 @@ export async function POST(request: NextRequest) {
 
 
     // TODO: save image to storage
+    // TODO: save image url into db as message
 
     return Response.json(await response.json()) 
         // .then(response => response.text())

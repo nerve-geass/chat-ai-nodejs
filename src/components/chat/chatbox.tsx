@@ -1,21 +1,49 @@
-import { AiGirlfriendType } from "@/models/ai-girlfriend";
-import { useChatAIUtils } from "@/utils/chat-ai";
-import { useEffect } from "react"
-import { v4 as uuidv4 } from 'uuid';
+import { AiGirlfriendType } from "@/models/ai-girlfriend"
+import { useChatAIUtils } from "@/utils/chat-ai"
+import { saveMessage } from "@/utils/useSaveMessage"
+import useUser from "@/utils/useUser"
+import { Session } from "next-auth"
+import { useEffect, useState } from "react"
+import { v4 as uuidv4 } from 'uuid'
 
 export type ConversationType = {
     type: 'out' | 'in'
-    text: string
+    text: string | null
+    image: string | null
     avatar: string
     name: string
 }
 
 
-export const ChatBox = ({ conversation, model }: { conversation: ConversationType[] | undefined, model: AiGirlfriendType }) => {
-    const {generateImageAi: generateImageCallback,} = useChatAIUtils(model)
+export const ChatBox = ({ session, model }: { session: Session, model: AiGirlfriendType }) => {
+    const { data: user, isLoading: isLoadingUser } = useUser(session.user?.email!)
+
+    const [data, setData] = useState<ConversationType[] | null>(null)
+    const [message, setMessage] = useState<string>("")
+    const [isLoading, setLoading] = useState(true)
+
+    const updateChatBody = () => {
+        let scrollHeight = document.getElementById("chat-body")?.scrollHeight!
+        let chatBody = document.getElementById("chat-body")
+        if (chatBody) chatBody.scrollTop = scrollHeight
+    }
+
+    useEffect(() => {
+        if (user !== null && !isLoadingUser) {
+            fetch("/api/users/" + user.id + "/chats/" + model.name, { method: 'GET', headers: { "Content-Type": "application/json" } })
+                .then(response => response.json())
+                .then((data) => {
+                    updateChatBody()
+                    setData(data)
+                    setLoading(false)
+                })
+        }
+    }, [user, isLoadingUser])
+
+    const { generateImageAi: generateImageCallback, chatCompletion } = useChatAIUtils(user, model)
 
     const handleGenerateImage = () => {
-        console.log("chiedo immagine a model "+ model.model)
+        console.log("chiedo immagine a model " + model.model)
         generateImageCallback()
     }
 
@@ -23,19 +51,40 @@ export const ChatBox = ({ conversation, model }: { conversation: ConversationTyp
         console.log(userText)
     }
 
-    useEffect(() => {
-        let scrollHeight = document.getElementById("chat-body")?.scrollHeight!
-        let chatBody = document.getElementById("chat-body")
-        if (chatBody) chatBody.scrollTop = scrollHeight
-    }, conversation)
+    const handleMessage = async (event: any) => {
+        event.preventDefault()
+        setLoading(true)
+
+        const outMessage: ConversationType = {
+            type: "out",
+            text: message,
+            image: null,
+            avatar: "/dist/media/img/avatar6.jpg",
+            name: "me"
+        }
+
+        if (!(await saveMessage(user.id, outMessage, model.name))) return false
+
+        data?.push(outMessage)
+
+        setMessage("")
+
+        const response = await chatCompletion(data!)
+
+        if (!(await saveMessage(user.id, response, model.name))) return false
+
+        data?.push(response)
+        updateChatBody()
+        setLoading(false)
+    }
 
     return (
         <div className="chat">
-            <div className="chat-preloader d-none">
+            {isLoading ? <div className="chat-preloader d-none">
                 <div className="spinner-border" role="status">
                     <span className="sr-only">Loading...</span>
                 </div>
-            </div>
+            </div> : null}
             <div className="no-message-container">
                 <div className="row mb-5">
                     <div className="col-md-4 offset-4">
@@ -45,8 +94,8 @@ export const ChatBox = ({ conversation, model }: { conversation: ConversationTyp
                 <p className="lead">Choose a chat or start a <a href="#" data-left-sidebar="friends">new chat</a>.</p>
             </div>
             <div className="chat-body" id="chat-body">
-                <div className="messages">
-                    {conversation?.map(message =>
+                <div className="messages" style={{maxWidth: 900, maxHeight: 450, scrollbarWidth: "none", overflow: "scroll"}}>
+                    {!data || data.length === 0 ? <small>Fai il primo passo e scrivi un messaggio.</small> : data?.map(message =>
                         <div className={`message-item ${message.type}`} key={uuidv4()} >
                             <div className="message-avatar">
                                 <figure className="avatar avatar-sm">
@@ -57,10 +106,10 @@ export const ChatBox = ({ conversation, model }: { conversation: ConversationTyp
                                 </div>
                             </div>
                             <div className="message-content">
-                                <div className="message-text">{message.text}</div>
+                                <div className="message-text" style={{scrollbarWidth: "none", overflow: "scroll"}}>{message.text}</div>
                             </div>
                             <div>
-                                {message.type === 'in' ? <i style={{ cursor: 'pointer' }} onClick={() => handlePlayVoice(message.text)} className="mdi mdi-volume-high">
+                                {message.type === 'in' ? <i style={{ cursor: 'pointer' }} onClick={() => handlePlayVoice(message.text!)} className="mdi mdi-volume-high">
                                     <small>Play voice</small
                                     ></i> : null}
                             </div>
@@ -449,12 +498,16 @@ export const ChatBox = ({ conversation, model }: { conversation: ConversationTyp
                 </div>
             </div>
             <div className="chat-footer" data-intro-js="6">
-                <form className="d-flex">
+                <form className="d-flex" onSubmit={handleMessage}>
                     <button className="btn btn-light-info mr-3" style={{ width: 214, height: 60, padding: "22px 36px" }} onClick={() => handleGenerateImage()}
                         type="button">
                         Chiedi una foto
                     </button>
-                    <input type="text" className="form-control form-control-main" placeholder="Write a message." />
+                    <input type="text" id="messageInputChat"
+                        className="form-control form-control-main"
+                        placeholder="Write a message."
+                        value={message}
+                        onChange={(e) => setMessage(e.currentTarget.value)} />
                     <div>
                         <button className="btn btn-primary ml-2 btn-floating" type="submit">
                             <i className="mdi mdi-send"></i>
