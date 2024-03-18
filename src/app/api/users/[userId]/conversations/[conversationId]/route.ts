@@ -73,3 +73,19 @@ export async function PUT(request: NextRequest, { params }: { params: { userId: 
 
   return Response.json({ conversationID })
 }
+
+export async function DELETE(request: NextRequest, { params }: { params: { userId: string, conversationId: string } }) {
+  try {
+    const db = await openDB()
+
+    await db.run(`DELETE 
+    FROM Messages 
+    WHERE ConversationID = ? 
+    AND ConversationID IN (SELECT ConversationID FROM Conversations WHERE ConversationID = ? AND UserID = ?)`, params.conversationId, params.conversationId, params.userId)
+
+    return Response.json({ status: "ok" })
+  } catch (error) {
+    console.log({ message: "cleaning up conversationid:" + params.conversationId, error })
+    return Response.json({ error: error })
+  }
+}

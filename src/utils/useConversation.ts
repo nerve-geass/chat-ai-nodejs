@@ -18,6 +18,19 @@ export const useConversation = () => {
         }
     }
    
+    const cleanUpChat = async (userId: string, conversationId: string) => {
+        var myHeaders = new Headers();
+        myHeaders.append("Content-Type", "application/json")
+
+        return await fetch("/api/users/" + userId + "/conversations/" + conversationId, {
+            method: 'DELETE', headers: myHeaders
+        }).then(response => response.json())
+        .catch(reason => {
+            console.error(reason)
+            return Promise.reject({error: `Error when cleaning chat for conversation id: ${conversationId}`})
+        })
+    }
+   
     const getAllConversations = async (userId: string): Promise<{conversationId: string, model: AiGirlfriendType, createdAt: string}[]> => {
         var myHeaders = new Headers();
         myHeaders.append("Content-Type", "application/json")
@@ -51,7 +64,7 @@ export const useConversation = () => {
         const json = await conversationResponse.json()
 
         return {
-            conversationId: json.conversationId
+            conversationId: json.conversationID
         }
     }
 
@@ -77,5 +90,5 @@ export const useConversation = () => {
         }
     }
 
-    return {getAllConversations, getConversation, saveMessage, newConversation}
+    return {getAllConversations, getConversation, saveMessage, newConversation, cleanUpChat}
 }

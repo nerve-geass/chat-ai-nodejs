@@ -32,11 +32,11 @@ export default function Chat() {
                 <div className="layout">
 
                     {/* <!-- navigation --> */}
-                    <ChatNavigation />
+                    {/* <ChatNavigation /> */}
                     {/* <!-- ./ navigation --> */}
 
                     {/* <!-- Chat left sidebar --> */}
-                    <SideBar session={session!} chatId={chatId} />
+                    {/* <SideBar session={session!} chatId={chatId} /> */}
                     {/* <!-- ./ Chat left sidebar --> */}
 
                     {/* <!-- chat --> */}

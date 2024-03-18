@@ -1,18 +1,21 @@
+import { AiGirlfriend } from "@/models/ai-girlfriend";
 import { NextRequest, NextResponse } from "next/server";
 
 const grokToken = process.env.GROQ_API_KEY!
 const elevenLabsToken = process.env.ELEVEN_LABS_TOKEN!
 const modelsLabToken = process.env.MODELS_LAB_TOKEN!
 
-export async function POST(request: NextRequest) {
+export async function POST(request: NextRequest, { params }: { params: { userId: string, modelId: string } }) {
+
+    const model = AiGirlfriend.filter(model => model.name = params.modelId)[0]
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json")
     var raw = JSON.stringify({
         "key": modelsLabToken,
-        "prompt": "ultra realistic close up portrait ((beautiful pale cyberpunk sexy girl with heavy black eyeliner))",
+        "prompt": model.image_prompt,
         "negative_prompt": "bad quality",
-        "width": "512",
+        "width": "384",
         "height": "512",
         "safety_checker": false,
         "seed": null,
@@ -31,14 +34,13 @@ export async function POST(request: NextRequest) {
 
     const response = await fetch("https://modelslab.com/api/v6/realtime/text2img", requestOptions)
 
+    const json = await response.json()
 
-    // TODO: save image to storage
-    // TODO: save image url into db as message
-
-    return Response.json(await response.json()) 
-        // .then(response => response.text())
-        // .then(result => console.log(result))
-        // .catch(error => console.log('error', error))
+    if (json.status !== "success") {
+        return Response.json({error: "error when creating image for conversationId"}) 
+    }
+    
+    return Response.json({links: json.output, width: json.meta.width, height: json.meta.height})
 }
 
 

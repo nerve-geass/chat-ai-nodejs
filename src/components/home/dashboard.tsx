@@ -3,11 +3,13 @@ import useUser from "@/utils/useUser"
 import HeaderNav from "../header"
 import { Session } from "next-auth"
 import Loader from "../loader"
+import { useRouter } from "next/navigation"
 
 const proItemId = process.env.NEXT_PUBLIC_PRO_SUBSCRIPTION!
 const premiumItemId = process.env.NEXT_PUBLIC_PREMIUM_SUBSCRIPTION!
 
 export const Dashboard = ({session}: {session: Session}) => {
+    const router = useRouter()
     const { isError, isLoading, data: profile } = useUser(session.user?.email!)
 
     if (!session?.user?.email)
@@ -15,7 +17,7 @@ export const Dashboard = ({session}: {session: Session}) => {
 
 
     if (isError)
-        return <div>Something went wrong</div>
+        router.replace("/")
 
     if (isLoading) {
         return <Loader />

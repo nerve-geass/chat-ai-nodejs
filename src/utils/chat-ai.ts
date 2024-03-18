@@ -7,11 +7,19 @@ export function useChatAIUtils(user: UserType) {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    const generateImageAi = (model: AiGirlfriendType) => {
-        fetch("/api/users/" + user.id + "/chats/" + model.name + "/image", { method: 'POST', headers: myHeaders })
-            .then(response => response.text())
-            .then(result => console.log(result))
-            .catch(error => console.log('error', error));
+    const generateImageAi = async (model: AiGirlfriendType): Promise<ConversationType> => {
+        const response = await fetch("/api/users/" + user.id + "/chats/" + model.name + "/image", { method: 'POST', headers: myHeaders })
+        const json = await response.json()
+
+        // image internal api response
+        // links: json.proxy_links, width: json.meta.width, height: json.meta.height
+        return {
+            type: 'in',
+            text: null,
+            image: json.links[0],
+            avatar: model.avatar,
+            name: model.name
+        } as ConversationType;
     };
 
     const generateVoiceAi = (text: string) => {
@@ -40,7 +48,7 @@ export function useChatAIUtils(user: UserType) {
         fetch('https://api.elevenlabs.io/v1/text-to-speech/{voice_id}', options)
             .then(response => response.json())
             .then(response => console.log(response))
-            .catch(err => console.error(err));
+            .catch(err => console.error(err))
     };
 
     const chatCompletion = async (conversation: ConversationType[], model: AiGirlfriendType) => {
@@ -55,16 +63,16 @@ export function useChatAIUtils(user: UserType) {
             console.error(await chatCompletionResponse.json());
         }
 
-        const chatCompletionText: string = await chatCompletionResponse.json();
+        const chatCompletionText: string = await chatCompletionResponse.json()
 
         return {
             type: 'in',
-            text: chatCompletionText.replaceAll("\"", ""),
+            text: chatCompletionText.replaceAll("\"", "").replaceAll("\[Auto-correzione:.*?\]", ""),
             image: null,
             avatar: model.avatar,
             name: model.name
-        } as ConversationType;
+        } as ConversationType
     };
 
-    return { generateImageAi, generateVoiceAi, chatCompletion };
+    return { generateImageAi, generateVoiceAi, chatCompletion }
 }

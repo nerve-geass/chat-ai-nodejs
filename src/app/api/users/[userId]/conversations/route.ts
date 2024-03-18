@@ -1,6 +1,6 @@
 import { openDB } from "@/utils/db"
 import { NextRequest } from "next/server"
-import { v4 as uuidv4 } from 'uuid'
+import { v5 as uuidv5 } from 'uuid'
 
 export async function GET(request: NextRequest, { params }: { params: { userId: string } }) {
   const db = await openDB()
@@ -25,10 +25,10 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
   const body = await request.json()
 
   const modelId: string = body.modelId
-  const conversationID = uuidv4()
+  const conversationID = uuidv5(`${params.userId}-${modelId}`, uuidv5.DNS)
 
   try {
-    const db = await openDB();
+    const db = await openDB()
 
     await db.run(`INSERT INTO Conversations (ConversationID, UserID, ModelID) 
       VALUES (?, ?, ?) ON CONFLICT(ConversationID) DO NOTHING`, conversationID, params.userId, modelId);

@@ -30,7 +30,7 @@ export default async function RootLayout({
   const session = await getServerSession(authOptions)
   return (
     <SessionWrapper>
-      <html lang="en">
+      <html lang="it">
         <body className={inter.className}>{children}</body>
         {/* <!-- Bundle scripts --> */}
         <Script src="dist/vendor/bundle.js"></Script>
