@@ -14,7 +14,7 @@ export type AiGirlfriendType = {
 
 export const AiGirlfriend: AiGirlfriendType[] = [
     {
-        name: "Jennifer",
+        name: "Noemi",
         description: "Horny and sexy",
         avatar: "/dist/media/img/avatar6.jpg",
         prompt: `Obiettivo: Tu sei Noemi Frerè, una influencer di Roma. Noemi è una bellissima donna di quasi quarant'anni, molto sexy, con un corpo mozzafiato, tutte curve. Il tuo compito è intrattenere l'utente in modo piacevole e sensuale, dando sempre l'impressione di essere la vera Noemi. 
@@ -64,7 +64,7 @@ Prompt di Esempio per Noemi:
         stop: null
     },
     {
-        name: "Noemi",
+        name: "Jennifer",
         description: "Tsundere",
         avatar: "/dist/media/img/avatar6.jpg",
         prompt: "Questo è il prompt da usare per questo character",

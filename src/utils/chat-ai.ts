@@ -3,11 +3,11 @@ import { ConversationType } from "@/components/chat/chatbox"
 import { AiGirlfriendType } from "@/models/ai-girlfriend"
 import { UserType } from "./useUser";
 
-export function useChatAIUtils(user: UserType, model: AiGirlfriendType) {
+export function useChatAIUtils(user: UserType) {
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json");
 
-    const generateImageAi = () => {
+    const generateImageAi = (model: AiGirlfriendType) => {
         fetch("/api/users/" + user.id + "/chats/" + model.name + "/image", { method: 'POST', headers: myHeaders })
             .then(response => response.text())
             .then(result => console.log(result))
@@ -43,7 +43,7 @@ export function useChatAIUtils(user: UserType, model: AiGirlfriendType) {
             .catch(err => console.error(err));
     };
 
-    const chatCompletion = async (conversation: ConversationType[]) => {
+    const chatCompletion = async (conversation: ConversationType[], model: AiGirlfriendType) => {
         const chatCompletionResponse = await fetch("/api/users/" + user.id + "/chats/" + model.name + "/completion", {
             method: 'POST', headers: myHeaders, body: JSON.stringify({
                 messages: conversation
@@ -55,11 +55,11 @@ export function useChatAIUtils(user: UserType, model: AiGirlfriendType) {
             console.error(await chatCompletionResponse.json());
         }
 
-        const chatCompletionText = await chatCompletionResponse.text();
+        const chatCompletionText: string = await chatCompletionResponse.json();
 
         return {
             type: 'in',
-            text: chatCompletionText,
+            text: chatCompletionText.replaceAll("\"", ""),
             image: null,
             avatar: model.avatar,
             name: model.name

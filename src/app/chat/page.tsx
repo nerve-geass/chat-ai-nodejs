@@ -11,22 +11,19 @@ import Disconnected from "../../components/chat/disconnected";
 import VoiceCallModal from "../../components/chat/voicecallmodal";
 import HeaderNav from "../../components/header";
 import { useSearchParams } from "next/navigation";
-import { AiGirlfriend } from "@/models/ai-girlfriend";
 import Image from "next/image";
 import Loader from "@/components/loader";
 
 export default function Chat() {
     const query = useSearchParams()
 
-    const modelChat: string = query.get('chatId') === null ? AiGirlfriend[0].name : query.get('chatId')!
+    const chatId = query.get('chatId')
 
     const { data: session, status } = useSession()
 
     if (status === "loading") {
         return <Loader />
     }
-
-    const modelCharacter = AiGirlfriend.filter((model) => model.name == modelChat)
 
     return (
         <>
@@ -39,11 +36,11 @@ export default function Chat() {
                     {/* <!-- ./ navigation --> */}
 
                     {/* <!-- Chat left sidebar --> */}
-                    <SideBar modelChat={modelChat} />
+                    <SideBar session={session!} chatId={chatId} />
                     {/* <!-- ./ Chat left sidebar --> */}
 
                     {/* <!-- chat --> */}
-                    <ChatBox session={session!} model={modelCharacter[0]}
+                    <ChatBox session={session!} conversationId={chatId}
                     />
                     {/* <!-- ./ chat --> */}
 

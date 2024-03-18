@@ -1,9 +1,27 @@
-import { AiGirlfriend } from "@/models/ai-girlfriend"
+import { AiGirlfriend, AiGirlfriendType } from "@/models/ai-girlfriend"
+import { useConversation } from "@/utils/useConversation"
+import useUser from "@/utils/useUser"
+import { Session } from "next-auth"
 import { useRouter } from "next/navigation"
+import { useEffect, useState } from "react"
 
-export const SideBar = ({modelChat} : {modelChat: string}) =>  {
+export const SideBar = ({session, chatId}: {session: Session, chatId: string | null}) => {
+    const { data: user, isLoading: isLoadingUser } = useUser(session.user?.email!)
+    const { getAllConversations } = useConversation()
 
-    const models = AiGirlfriend
+    const [conversations, setConversations] = useState<{
+        conversationId: string
+        model: AiGirlfriendType
+        createdAt: string
+    }[] | null>(null) 
+
+    useEffect(()=> {
+        if (user) {
+            getAllConversations(user.id)
+            .then(data => setConversations(data))
+            
+        }
+    }, [user])
 
     const router = useRouter()
 
@@ -11,8 +29,8 @@ export const SideBar = ({modelChat} : {modelChat: string}) =>  {
         <div id="chats" className="left-sidebar open">
             <div className="left-sidebar-content">
                 <ul className="list-group list-group-flush">
-                    {models.map(model =>
-                        <li className={`list-group-item ${modelChat===model.name ? 'active' : ''}`} key={model.name} onClick={() => router.replace(`/chat?chatId=${model.name}`)}>
+                    {conversations ? conversations.map(conversation =>
+                        <li className={`list-group-item ${conversation.conversationId===chatId ? 'active' : ''}`} key={conversation.conversationId} onClick={() => router.replace(`/chat?chatId=${conversation.conversationId}`)}>
                             <div>
                                 <figure className="avatar mr-3">
                                     <img src="./dist/media/img/avatar6.jpg" className="rounded-circle" alt="image" />
@@ -20,8 +38,9 @@ export const SideBar = ({modelChat} : {modelChat: string}) =>  {
                             </div>
                             <div className="users-list-body ml-3">
                                 <div>
-                                    <h5>{model.name}</h5>
-                                    <p>{model.description}</p>
+                                    <h5>{conversation.model.name}</h5>
+                                    <p>{conversation.model.description}</p>
+                                    <p>{conversation.createdAt}</p>
                                 </div>
                                 <div className="users-list-action">
                                     <div className="action-toggle">
@@ -39,7 +58,7 @@ export const SideBar = ({modelChat} : {modelChat: string}) =>  {
                                 </div>
                             </div>
                         </li>
-                    )}
+                    ) : <small>Crea una nuova conversazione</small>}
                 </ul>
             </div>
         </div>

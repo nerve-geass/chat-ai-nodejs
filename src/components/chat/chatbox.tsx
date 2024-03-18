@@ -1,8 +1,9 @@
-import { AiGirlfriendType } from "@/models/ai-girlfriend"
+import { AiGirlfriend, AiGirlfriendType } from "@/models/ai-girlfriend"
 import { useChatAIUtils } from "@/utils/chat-ai"
-import { saveMessage } from "@/utils/useSaveMessage"
+import { useConversation } from "@/utils/useConversation"
 import useUser from "@/utils/useUser"
 import { Session } from "next-auth"
+import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { v4 as uuidv4 } from 'uuid'
 
@@ -15,12 +16,20 @@ export type ConversationType = {
 }
 
 
-export const ChatBox = ({ session, model }: { session: Session, model: AiGirlfriendType }) => {
+export const ChatBox = ({ session, conversationId }: { session: Session, conversationId: string | null }) => {
     const { data: user, isLoading: isLoadingUser } = useUser(session.user?.email!)
+    const router = useRouter()
 
-    const [data, setData] = useState<ConversationType[] | null>(null)
+    const { getConversation, newConversation, saveMessage } = useConversation()
+
+    const [data, setData] = useState<ConversationType[]>([])
+    const [model, setModel] = useState<AiGirlfriendType | null>(null)
     const [message, setMessage] = useState<string>("")
     const [isLoading, setLoading] = useState(true)
+
+    const chooseGirlfriend = (modelName: string) => {
+        setModel(AiGirlfriend.find(model => model.name = modelName)!)
+    }
 
     const updateChatBody = () => {
         let scrollHeight = document.getElementById("chat-body")?.scrollHeight!
@@ -28,23 +37,26 @@ export const ChatBox = ({ session, model }: { session: Session, model: AiGirlfri
         if (chatBody) chatBody.scrollTop = scrollHeight
     }
 
+    console.log({conversationId, model})
+
     useEffect(() => {
-        if (user !== null && !isLoadingUser) {
-            fetch("/api/users/" + user.id + "/chats/" + model.name, { method: 'GET', headers: { "Content-Type": "application/json" } })
-                .then(response => response.json())
+        if (user && conversationId) {
+            getConversation(user.id, conversationId)
                 .then((data) => {
                     updateChatBody()
-                    setData(data)
+                    setData(data.conversation)
+                    setModel(AiGirlfriend.filter(model => model.name === data.modelId)[0])
                     setLoading(false)
                 })
         }
-    }, [user, isLoadingUser])
+    }, [user, conversationId])
 
-    const { generateImageAi: generateImageCallback, chatCompletion } = useChatAIUtils(user, model)
+    const { generateImageAi: generateImageCallback, chatCompletion } = useChatAIUtils(user)
 
     const handleGenerateImage = () => {
-        console.log("chiedo immagine a model " + model.model)
-        generateImageCallback()
+        console.log("chiedo immagine a model " + model!.model)
+
+        generateImageCallback(model!)
     }
 
     const handlePlayVoice = (userText: string) => {
@@ -63,19 +75,22 @@ export const ChatBox = ({ session, model }: { session: Session, model: AiGirlfri
             name: "me"
         }
 
-        if (!(await saveMessage(user.id, outMessage, model.name))) return false
+        const messageConversationId = conversationId ? conversationId : (await newConversation(user.id, model!.name)).conversationId
+
+        if (!(await saveMessage(user.id, outMessage, model!.name, messageConversationId))) return false
 
         data?.push(outMessage)
 
         setMessage("")
 
-        const response = await chatCompletion(data!)
+        const response = await chatCompletion(data!, model!)
 
-        if (!(await saveMessage(user.id, response, model.name))) return false
+        if (!(await saveMessage(user.id, response, model!.name, messageConversationId))) return false
 
         data?.push(response)
         updateChatBody()
         setLoading(false)
+        router.push(`/chat?chatId=${conversationId}`)
     }
 
     return (
@@ -94,27 +109,41 @@ export const ChatBox = ({ session, model }: { session: Session, model: AiGirlfri
                 <p className="lead">Choose a chat or start a <a href="#" data-left-sidebar="friends">new chat</a>.</p>
             </div>
             <div className="chat-body" id="chat-body">
-                <div className="messages" style={{maxWidth: 900, maxHeight: 450, scrollbarWidth: "none", overflow: "scroll"}}>
-                    {!data || data.length === 0 ? <small>Fai il primo passo e scrivi un messaggio.</small> : data?.map(message =>
-                        <div className={`message-item ${message.type}`} key={uuidv4()} >
-                            <div className="message-avatar">
-                                <figure className="avatar avatar-sm">
-                                    <img src={message.avatar} className="rounded-circle" alt="image" />
-                                </figure>
-                                <div className="align-middle">
-                                    <h5>{message.name}</h5>
+                <div className="messages" style={{ maxWidth: 900, maxHeight: 450, scrollbarWidth: "none", overflow: "scroll" }}>
+                    {!data || data.length === 0
+                        ? <>
+                            <small>Fai il primo passo e scrivi un messaggio.</small>
+
+                            {model
+                                ? null
+                                : <>
+                                    <small>Chatta con:</small>
+                                    {AiGirlfriend.map(girlfriend => {
+                                        return <button className="btn btn-primary mb-2" key={girlfriend.name} onClick={() => chooseGirlfriend(girlfriend.name)}>{girlfriend.name}</button>
+                                    })
+                                    }
+                                </>}
+                        </>
+                        : data?.map(message =>
+                            <div className={`message-item ${message.type}`} key={uuidv4()} >
+                                <div className="message-avatar">
+                                    <figure className="avatar avatar-sm">
+                                        <img src={message.avatar} className="rounded-circle" alt="image" />
+                                    </figure>
+                                    <div className="align-middle">
+                                        <h5>{message.name}</h5>
+                                    </div>
+                                </div>
+                                <div className="message-content">
+                                    <div className="message-text" style={{ scrollbarWidth: "none", overflow: "scroll" }}>{message.text}</div>
+                                </div>
+                                <div>
+                                    {message.type === 'in' ? <i style={{ cursor: 'pointer' }} onClick={() => handlePlayVoice(message.text!)} className="mdi mdi-volume-high">
+                                        <small>Play voice</small
+                                        ></i> : null}
                                 </div>
                             </div>
-                            <div className="message-content">
-                                <div className="message-text" style={{scrollbarWidth: "none", overflow: "scroll"}}>{message.text}</div>
-                            </div>
-                            <div>
-                                {message.type === 'in' ? <i style={{ cursor: 'pointer' }} onClick={() => handlePlayVoice(message.text!)} className="mdi mdi-volume-high">
-                                    <small>Play voice</small
-                                    ></i> : null}
-                            </div>
-                        </div>
-                    )}
+                        )}
 
                     {/* <div className="message-item in">
                 <div className="message-avatar">
@@ -498,22 +527,24 @@ export const ChatBox = ({ session, model }: { session: Session, model: AiGirlfri
                 </div>
             </div>
             <div className="chat-footer" data-intro-js="6">
-                <form className="d-flex" onSubmit={handleMessage}>
-                    <button className="btn btn-light-info mr-3" style={{ width: 214, height: 60, padding: "22px 36px" }} onClick={() => handleGenerateImage()}
-                        type="button">
-                        Chiedi una foto
-                    </button>
-                    <input type="text" id="messageInputChat"
-                        className="form-control form-control-main"
-                        placeholder="Write a message."
-                        value={message}
-                        onChange={(e) => setMessage(e.currentTarget.value)} />
-                    <div>
-                        <button className="btn btn-primary ml-2 btn-floating" type="submit">
-                            <i className="mdi mdi-send"></i>
+                {model ?
+                    <form className="d-flex" onSubmit={handleMessage}>
+                        <button className="btn btn-light-info mr-3" style={{ width: 214, height: 60, padding: "22px 36px" }} onClick={() => handleGenerateImage()}
+                            type="button">
+                            Chiedi una foto
                         </button>
-                    </div>
-                </form>
+                        <input type="text" id="messageInputChat"
+                            className="form-control form-control-main"
+                            placeholder="Write a message."
+                            value={message}
+                            onChange={(e) => setMessage(e.currentTarget.value)} />
+                        <div>
+                            <button className="btn btn-primary ml-2 btn-floating" type="submit">
+                                <i className="mdi mdi-send"></i>
+                            </button>
+                        </div>
+                    </form>
+                    : null}
             </div>
         </div>
     )

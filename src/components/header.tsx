@@ -2,8 +2,12 @@
 
 import { signOut } from "next-auth/react";
 import LoginButton from "./login-button";
+import { usePathname } from 'next/navigation'
 
 export default function HeaderNav() {
+
+    const pathname = usePathname()
+
     return <>
         <nav className="navbar fixed-top bg-white navbar-expand-lg navbar-light">
             <div className="container-fluid">
@@ -20,10 +24,10 @@ export default function HeaderNav() {
                 </button>
                 <div className="collapse navbar-collapse" id="navbarNav">
                     <ul className="navbar-nav ml-auto">
-                        <li className="nav-item active">
+                        <li className={`nav-item ${pathname === "/" ? "active" : ""} `}>
                             <a className="nav-link" href="./">Home</a>
                         </li>
-                        <li className="nav-item">
+                        <li className={`nav-item ${pathname.indexOf("/chat") > -1 ? "active" : ""} `}>
                             <a className="nav-link" href="/chat">Chat</a>
                         </li>
                         {/* <li className="nav-item">

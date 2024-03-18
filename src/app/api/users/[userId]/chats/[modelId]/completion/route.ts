@@ -11,7 +11,6 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
   const body = await request.json()
 
   const requestMessages: ConversationType[] = body.messages
-  console.log(requestMessages)
 
   const messages = requestMessages
     .filter(message => message.image === null)
@@ -41,8 +40,7 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
   // for await (const chunk of chatCompletion) {
   //   process.stdout.write(chunk.choices[0]?.delta?.content || '');
   // }
-
-  console.log({message: chatCompletion.choices[0].message.content, co: "èiun contenutooooooooo"})
+  
   // for Stream responses visit: https://nextjs.org/docs/app/building-your-application/routing/route-handlers#streaming
   return Response.json(chatCompletion.choices[0].message.content)
 }

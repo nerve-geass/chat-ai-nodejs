@@ -9,7 +9,6 @@ export const authOptions = {
             clientSecret: process.env.AUTH0_CLIENT_SECRET!,
             issuer: process.env.AUTH0_ISSUER!,
             async profile(profile: any, tokens) {
-                console.log("user passato da qui profile")
 
                 try {
                     const db = await openDB();
