@@ -4,7 +4,7 @@ import { useConversation } from "@/utils/useConversation"
 import useUser from "@/utils/useUser"
 import { Session } from "next-auth"
 import { useRouter } from "next/navigation"
-import { useEffect, useRef, useState } from "react"
+import { MouseEvent, useEffect, useRef, useState } from "react"
 import { v4 as uuidv4 } from 'uuid'
 
 export type ConversationType = {
@@ -19,6 +19,10 @@ export type ConversationType = {
 export const ChatBox = ({ session, conversationId }: { session: Session, conversationId: string | null }) => {
     const router = useRouter()
 
+    let audioCtx = new AudioContext()
+    let source: AudioBufferSourceNode
+    let buffer
+
     const { data: user, isError } = useUser(session.user?.email!)
 
     if (isError)
@@ -32,6 +36,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
     const [model, setModel] = useState<AiGirlfriendType | null>(AiGirlfriend[0])
     const [message, setMessage] = useState<string>("")
     const [isLoading, setLoading] = useState(false)
+    const [isLoadingVoice, setLoadingVoice] = useState(false)
 
     // const chooseGirlfriend = (modelName: string) => {
     //     setModel(AiGirlfriend.find(model => model.name = modelName)!)
@@ -48,7 +53,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
         }
     }, [user, conversationId])
 
-    const { generateImageAi: generateImageCallback, chatCompletion } = useChatAIUtils(user)
+    const { generateImageAi: generateImageCallback, chatCompletion, generateVoiceAi } = useChatAIUtils(user)
 
     const handleGenerateImage = async () => {
         setLoading(true)
@@ -64,8 +69,36 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
         setLoading(false)
     }
 
-    const handlePlayVoice = (userText: string) => {
-        console.log(userText)
+    const handlePlayVoice = async (userText: string) => {
+        setLoadingVoice(true)
+        try {
+            // For knowledge
+            // https://github.com/mdn/webaudio-examples/blob/main/audio-buffer-source-node/playbackrate/script.js
+            const response = await generateVoiceAi(userText, model!)
+            buffer = await audioCtx.decodeAudioData(await response.arrayBuffer())
+            source = audioCtx.createBufferSource()
+            source.buffer = buffer
+            source.connect(audioCtx.destination)
+            source.loop = false
+            source.start()
+
+        } catch (err) {
+            console.error(`Unable to fetch the audio file. Error: ${err}`);
+            alert(`Unable to fetch the audio file, sorry for the issue :(, please contact our admins`);
+        }
+        setLoadingVoice(false)
+    }
+
+    const handleStopVoice = (e: MouseEvent) => {
+        console.log(e)
+        try {
+            // For knowledge
+            // https://github.com/mdn/webaudio-examples/blob/main/audio-buffer-source-node/playbackrate/script.js
+            source.stop()
+
+        } catch (err) {
+            console.error(`Unable to fetch the audio file. Error: ${err}`);
+        }
     }
 
     const handleMessage = async (event: any) => {
@@ -117,7 +150,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
 
     return (
         <div style={{ padding: 12, paddingBottom: 100 }}>
-            <div className="chat" style={{padding: 0}}>
+            <div className="chat" style={{ padding: 0 }}>
                 <div className="chat-body">
                     <div className="messages" style={{ height: 450, scrollbarWidth: "none", overflow: "auto" }}>
                         {!data || data.length === 0
@@ -145,9 +178,20 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
                                         }
                                     </div>
                                     <div>
-                                        {message.type === 'in' && !message.image ? <i style={{ cursor: 'pointer' }} onClick={() => handlePlayVoice(message.text!)} className="mdi mdi-volume-high">
-                                            <small>Riproduci voce</small></i>
-                                            : null}
+                                        {message.type === 'in' && !message.image ? <>
+                                            <button onClick={(e) => handlePlayVoice(message.text!)}>
+                                                {isLoadingVoice ?
+                                                    <div className="spinner-border" style={{ width: '1em', height: '1em', color: 'white' }} role="status">
+                                                        <span className="sr-only">Loading...</span>
+                                                    </div>
+                                                    : <i style={{ cursor: 'pointer' }} className="mdi mdi-volume-high"></i>}
+                                                <small>Riproduci voce</small>
+                                            </button>
+                                            <button id="stop" onClick={(e) => handleStopVoice(e)}>
+                                                <i style={{ cursor: 'pointer' }} className="mdi mdi-stop"></i>
+                                                <small>Stop</small>
+                                            </button>
+                                        </> : null}
                                     </div>
                                 </div>
                             )}
