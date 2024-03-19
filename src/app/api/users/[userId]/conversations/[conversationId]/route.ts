@@ -71,7 +71,7 @@ export async function PUT(request: NextRequest, { params }: { params: { userId: 
     return Response.json({ message: "Error during saving messages", lastMessage, params, conversationID }, { status: 500 })
   }
 
-  return Response.json({ conversationID })
+  return Response.json({ conversationId: conversationID })
 }
 
 export async function DELETE(request: NextRequest, { params }: { params: { userId: string, conversationId: string } }) {

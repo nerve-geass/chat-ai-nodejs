@@ -64,7 +64,7 @@ export const useConversation = () => {
         const json = await conversationResponse.json()
 
         return {
-            conversationId: json.conversationID
+            conversationId: json.conversationId
         }
     }
 
