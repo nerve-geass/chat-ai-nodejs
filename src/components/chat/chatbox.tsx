@@ -19,8 +19,7 @@ export type ConversationType = {
 export const ChatBox = ({ session, conversationId }: { session: Session, conversationId: string | null }) => {
     const router = useRouter()
 
-    let audioCtx = new AudioContext()
-    let source: AudioBufferSourceNode
+    let audioCtx: AudioContext
     let buffer
 
     const { data: user, isError } = useUser(session.user?.email!)
@@ -36,6 +35,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
     const [model, setModel] = useState<AiGirlfriendType | null>(AiGirlfriend[0])
     const [message, setMessage] = useState<string>("")
     const [isLoading, setLoading] = useState(false)
+    const [source, setSource] = useState<AudioBufferSourceNode | null>(null)
     const [isLoadingVoice, setLoadingVoice] = useState(false)
 
     // const chooseGirlfriend = (modelName: string) => {
@@ -74,13 +74,14 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
         try {
             // For knowledge
             // https://github.com/mdn/webaudio-examples/blob/main/audio-buffer-source-node/playbackrate/script.js
+            audioCtx = new AudioContext()
             const response = await generateVoiceAi(userText, model!)
             buffer = await audioCtx.decodeAudioData(await response.arrayBuffer())
-            source = audioCtx.createBufferSource()
-            source.buffer = buffer
-            source.connect(audioCtx.destination)
-            source.loop = false
-            source.start()
+            let sourceAudio = audioCtx.createBufferSource()
+            sourceAudio.buffer = buffer
+            sourceAudio.connect(audioCtx.destination)
+            sourceAudio.loop = false
+            setSource(sourceAudio)
 
         } catch (err) {
             console.error(`Unable to fetch the audio file. Error: ${err}`);
@@ -90,11 +91,13 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
     }
 
     const handleStopVoice = (e: MouseEvent) => {
-        console.log(e)
         try {
             // For knowledge
             // https://github.com/mdn/webaudio-examples/blob/main/audio-buffer-source-node/playbackrate/script.js
-            source.stop()
+            if(source) {
+                source.stop()
+                setSource(null)
+            }
 
         } catch (err) {
             console.error(`Unable to fetch the audio file. Error: ${err}`);
@@ -143,6 +146,10 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
                 })
         }
     }
+
+    useEffect(() => {
+        if(source) source.start()
+    }, [source])
 
     useEffect(() => {
         bottomRef.current?.scrollIntoView({ behavior: "smooth" });
