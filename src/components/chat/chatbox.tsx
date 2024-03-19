@@ -42,7 +42,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
             getConversation(user.id, conversationId)
                 .then((data) => {
                     setData(data.conversation)
-                    setModel(AiGirlfriend.filter(model => model.name === data.modelId)[0])
+                    // setModel(AiGirlfriend.filter(model => model.name === data.modelId)[0])
                     setLoading(false)
                 })
         }
@@ -60,7 +60,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
 
         const newData = data
         setData(newData.concat(imageConversation))
-        router.push(`/chat?chatId=${conversationId}`)
+        router.push(`/chat?chatId=${messageConversationId}`)
         setLoading(false)
     }
 
@@ -96,7 +96,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
         const newDataFromResponse = outNewdata.concat(response)
         setData(newDataFromResponse)
         setLoading(false)
-        router.push(`/chat?chatId=${conversationId}`)
+        router.push(`/chat?chatId=${messageConversationId}`)
     }
 
     const handleCleanUpChat = () => {
