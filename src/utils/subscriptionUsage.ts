@@ -2,9 +2,8 @@ import { getSubscriptionUsageData } from "./db";
 
 const isSubscriptionOverdue = async (userId: string) => {
     const subscriptionUsageData = await getSubscriptionUsageData(userId)
-    console.log(subscriptionUsageData)
-    console.log({tier: process.env.FREE_TIER_ID!})
-    if (subscriptionUsageData[0].SubscriptionID === process.env.FREE_TIER_ID!) {
+    if (subscriptionUsageData[0].SubscriptionID === process.env.FREE_TIER_ID!
+        || subscriptionUsageData[0].EndSubscription === null) {
         return false
     }
     const dateCurrent = (new Date()).setHours(0, 0, 0, 0)
@@ -25,6 +24,7 @@ export const canGetMessage = async (userId: string) => {
         && subscriptionUsageData[0].MessageUsage >= subscriptionUsageData[0].MessageLimit) {
         return false
     }
+    return true
 }
 
 
@@ -39,6 +39,7 @@ export const canGetImage = async (userId: string) => {
         && subscriptionUsageData[0].ImagesUsed >= subscriptionUsageData[0].ImagesLimit) {
         return false
     }
+    return true
 }
 
 export const canGetAudio = async (userId: string) => {
@@ -52,4 +53,5 @@ export const canGetAudio = async (userId: string) => {
         && subscriptionUsageData[0].AudioUsed >= subscriptionUsageData[0].AudioLimit) {
         return false
     }
+    return true
 }
