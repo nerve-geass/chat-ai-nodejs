@@ -1,22 +1,19 @@
 import * as client from './db'
-import dotenv from 'dotenv'
-
 
 async function setup() {
-  dotenv.config()
 
   const freePlan = {
-    FREE_TIER_ID: process.env.FREE_TIER_ID!,
-    FREE_TIER_MESSAGES: process.env.FREE_TIER_MESSAGES! as unknown as number,
-    FREE_TIER_IMAGES: process.env.FREE_TIER_IMAGES! as unknown as number,
-    FREE_TIER_AUDIO: process.env.FREE_TIER_AUDIO! as unknown as number
+    FREE_TIER_ID: "FREE_TIER",
+    FREE_TIER_MESSAGES: 5,
+    FREE_TIER_IMAGES: 2,
+    FREE_TIER_AUDIO: 1
   }
   
   const proPlan = {
-    PRO_TIER_ID: process.env.PRO_TIER_ID!,
-    PRO_TIER_MESSAGES: process.env.PRO_TIER_MESSAGES! as unknown as number,
-    PRO_TIER_IMAGES: process.env.PRO_TIER_IMAGES! as unknown as number,
-    PRO_TIER_AUDIO: process.env.PRO_TIER_AUDIO! as unknown as number
+    PRO_TIER_ID: "PRO_TIER",
+    PRO_TIER_MESSAGES: 1000,
+    PRO_TIER_IMAGES: 1000,
+    PRO_TIER_AUDIO: 1000
   }
 
   // Open SQLite connection
