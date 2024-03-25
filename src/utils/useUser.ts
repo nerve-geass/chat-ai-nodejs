@@ -5,6 +5,10 @@ export type UserType = {
     email: string
     nickname: string
     subscriptionId: string | null
+    messagesUsed: number 
+    imagesUsed: number 
+    audioUsed: number 
+    endSubscription: Date | null
 }
 
 export default function useUser(id: String): { data: UserType, isLoading: boolean, isError: boolean } {

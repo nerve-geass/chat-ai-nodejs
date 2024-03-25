@@ -1,18 +1,30 @@
-import { AiGirlfriend } from "@/models/ai-girlfriend";
-import { NextRequest, NextResponse } from "next/server";
-
-const grokToken = process.env.GROQ_API_KEY!
-const elevenLabsToken = process.env.ELEVEN_LABS_TOKEN!
-const modelsLabToken = process.env.MODELS_LAB_TOKEN!
+import { ConversationType } from "@/components/chat/chatbox"
+import { AiGirlfriend } from "@/models/ai-girlfriend"
+import { saveMessage, updateImageUsage } from "@/utils/db"
+import { canGetImage } from "@/utils/subscriptionUsage"
+import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest, { params }: { params: { userId: string, modelId: string } }) {
 
     const model = AiGirlfriend.filter(model => model.name = params.modelId)[0]
+    const body = await request.json()
+
+    const conversationId: string = body.conversationId
+
+    try {
+        const check = await canGetImage(params.userId)
+        if (!check) {
+            return Response.json({ error: "You exceeded the limits of your tier" }, { status: 403 })
+        }
+    } catch (error) {
+        console.error({ message: "Error checking usages", params, conversationId, error });
+        return Response.json({ message: "Error checking usages", params, conversationId }, { status: 500 })
+    }
 
     var myHeaders = new Headers();
     myHeaders.append("Content-Type", "application/json")
     var raw = JSON.stringify({
-        "key": modelsLabToken,
+        "key": process.env.MODELS_LAB_TOKEN!,
         "prompt": model.image_prompt,
         "negative_prompt": "bad quality",
         "width": "384",
@@ -37,10 +49,26 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
     const json = await response.json()
 
     if (json.status !== "success") {
-        return Response.json({error: "error when creating image for conversationId"}) 
+        return Response.json({ error: "error when creating image for conversationId" })
     }
-    
-    return Response.json({links: json.output, width: json.meta.width, height: json.meta.height})
+
+    const imageMessage = {
+        type: 'in',
+        text: null,
+        image: json.output[0],
+        avatar: model.avatar,
+        name: model.name
+    } as ConversationType
+
+    try {
+        saveMessage(imageMessage, params.userId, params.modelId, conversationId)
+        updateImageUsage(params.userId)
+    } catch (error) {
+        console.error({ message: "Error during saving messages", imageMessage, params, conversationId, error })
+        return Response.json({ message: "Error during saving messages", imageMessage, params, conversationId, error }, { status: 500 })
+    }
+
+    return Response.json({ links: json.output, width: json.meta.width, height: json.meta.height })
 }
 
 

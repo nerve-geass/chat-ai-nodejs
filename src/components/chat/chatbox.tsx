@@ -1,5 +1,4 @@
 import { AiGirlfriend, AiGirlfriendType } from "@/models/ai-girlfriend"
-import { useChatAIUtils } from "@/utils/chat-ai"
 import { useConversation } from "@/utils/useConversation"
 import useUser from "@/utils/useUser"
 import { Session } from "next-auth"
@@ -29,7 +28,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
 
     const bottomRef = useRef<HTMLDivElement | null>(null)
 
-    const { getConversation, newConversation, saveMessage, cleanUpChat } = useConversation()
+    const { getConversation, newConversation, saveMessage, cleanUpChat, generateImageAi: generateImageCallback, chatCompletion, generateVoiceAi } = useConversation()
 
     const [data, setData] = useState<ConversationType[]>([])
     const [model, setModel] = useState<AiGirlfriendType | null>(AiGirlfriend[0])
@@ -37,10 +36,6 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
     const [isLoading, setLoading] = useState(false)
     const [source, setSource] = useState<AudioBufferSourceNode | null>(null)
     const [isLoadingVoice, setLoadingVoice] = useState(false)
-
-    // const chooseGirlfriend = (modelName: string) => {
-    //     setModel(AiGirlfriend.find(model => model.name = modelName)!)
-    // }
 
     useEffect(() => {
         if (user && conversationId) {
@@ -53,15 +48,11 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
         }
     }, [user, conversationId])
 
-    const { generateImageAi: generateImageCallback, chatCompletion, generateVoiceAi } = useChatAIUtils(user)
-
     const handleGenerateImage = async () => {
         setLoading(true)
         const messageConversationId = conversationId ? conversationId : (await newConversation(user.id, model!.name)).conversationId
 
-        const imageConversation = await generateImageCallback(model!)
-
-        if (!(await saveMessage(user.id, imageConversation, model!.name, messageConversationId))) return false
+        const imageConversation = await generateImageCallback(user.id, model!, messageConversationId)
 
         const newData = data
         setData(newData.concat(imageConversation))
@@ -75,7 +66,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
             // For knowledge
             // https://github.com/mdn/webaudio-examples/blob/main/audio-buffer-source-node/playbackrate/script.js
             audioCtx = new AudioContext()
-            const response = await generateVoiceAi(userText, model!)
+            const response = await generateVoiceAi(user.id, userText, model!, conversationId!)
             buffer = await audioCtx.decodeAudioData(await response.arrayBuffer())
             let sourceAudio = audioCtx.createBufferSource()
             sourceAudio.buffer = buffer
@@ -118,16 +109,12 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
 
         const messageConversationId = conversationId ? conversationId : (await newConversation(user.id, model!.name)).conversationId
 
-        if (!(await saveMessage(user.id, outMessage, model!.name, messageConversationId))) return false
-
         const outNewdata = data.concat(outMessage)
         setData(outNewdata)
 
         setMessage("")
 
-        const response = await chatCompletion(outNewdata, model!)
-
-        if (!(await saveMessage(user.id, response, model!.name, messageConversationId))) return false
+        const response = await chatCompletion(user.id, outNewdata, model!, messageConversationId)
 
         const newDataFromResponse = outNewdata.concat(response)
         setData(newDataFromResponse)

@@ -25,10 +25,6 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
     const girlfriend = AiGirlfriend.filter(model => model.name = conversationRecord[0].ModelID)[0]
 
     conversation = data.map(message => {
-      // ConversationID
-      // UserOrModelID
-      // MessageText
-      // MessageImage
       return {
         type: models.includes(message.UserOrModelID) ? "in" : "out",
         text: message.MessageText,
@@ -65,7 +61,7 @@ export async function PUT(request: NextRequest, { params }: { params: { userId: 
       MessageText,
       MessageImage
     ) VALUES (?, ?, ?, ?, ?) ON CONFLICT(MessageID) DO NOTHING`, messageID, conversationID, userOrModelID, lastMessage.text, lastMessage.image)
-    console.log({ message: 'MessageId inserted successfully: ' + messageID, lastMessage });
+    console.log({ message: 'MessageId inserted successfully: ' + messageID, lastMessage })
   } catch (error) {
     console.error({ message: "Error during saving messages", lastMessage, params, conversationID, error });
     return Response.json({ message: "Error during saving messages", lastMessage, params, conversationID }, { status: 500 })

@@ -2,6 +2,8 @@ import { ConversationType } from "@/components/chat/chatbox"
 import { AiGirlfriend } from "@/models/ai-girlfriend"
 import { NextRequest } from "next/server"
 import Groq from 'groq-sdk'
+import { saveMessage, updateMessageUsage } from "@/utils/db"
+import { canGetMessage } from "@/utils/subscriptionUsage"
 
 export async function POST(request: NextRequest, { params }: { params: { userId: string, modelId: string } }) {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! })
@@ -11,6 +13,25 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
   const body = await request.json()
 
   const requestMessages: ConversationType[] = body.messages
+  const conversationId: string = body.conversationId
+
+  const lastMessage: ConversationType = requestMessages
+    .filter(message => message.image === null)
+    .slice(-1)[0]
+
+  try {
+    const check = await canGetMessage(params.userId)
+    if (!check) {
+      return Response.json({ error: "You exceeded the limits of your tier" }, { status: 403 })
+    }
+
+    saveMessage(lastMessage, params.userId, params.modelId, conversationId)
+  } catch (error) {
+    console.error({ message: "Error during saving messages", lastMessage, params, conversationId, error });
+    return Response.json({ message: "Error during saving messages", lastMessage, params, conversationId }, { status: 500 })
+  }
+
+  // call chatcompletion
 
   const messages = requestMessages
     .filter(message => message.image === null)
@@ -40,9 +61,27 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
   // for await (const chunk of chatCompletion) {
   //   process.stdout.write(chunk.choices[0]?.delta?.content || '');
   // }
-  
+
+  const chatCompletionText = chatCompletion.choices[0].message.content
+  const completionMessage = {
+    type: 'in',
+    text: chatCompletionText.replaceAll("\"", "").replaceAll("\[.*?\]", ""),
+    image: null,
+    avatar: girlfriend.avatar,
+    name: girlfriend.name
+  } as ConversationType
+
+  try {
+
+    saveMessage(completionMessage, params.userId, params.modelId, conversationId)
+    updateMessageUsage(params.userId)
+  } catch (error) {
+    console.error({ message: "Error during saving messages", completionMessage, params, conversationId, error });
+    return Response.json({ message: "Error during saving messages", completionMessage, params, conversationId, error }, { status: 500 })
+  }
+
   // for Stream responses visit: https://nextjs.org/docs/app/building-your-application/routing/route-handlers#streaming
-  return Response.json(chatCompletion.choices[0].message.content)
+  return Response.json(chatCompletionText)
 }
 
 // { "id": "0a769ba9-6d72-92dc-9012-56ca11b54fb2", 
