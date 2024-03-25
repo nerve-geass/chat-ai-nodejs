@@ -2,6 +2,7 @@ import { getSubscriptionUsageData } from "./db";
 
 const isSubscriptionOverdue = async (userId: string) => {
     const subscriptionUsageData = await getSubscriptionUsageData(userId)
+    console.log(subscriptionUsageData)
     const dateCurrent = (new Date()).setHours(0, 0, 0, 0)
     const dateSubscription = (new Date(subscriptionUsageData[0].EndSubscription)).setHours(0, 0, 0, 0)
     return dateCurrent >= dateSubscription
