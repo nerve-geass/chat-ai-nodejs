@@ -3,6 +3,7 @@ import { getSubscriptionUsageData } from "./db";
 const isSubscriptionOverdue = async (userId: string) => {
     const subscriptionUsageData = await getSubscriptionUsageData(userId)
     console.log(subscriptionUsageData)
+    console.log({tier: process.env.FREE_TIER_ID!})
     if (subscriptionUsageData[0].SubscriptionID === process.env.FREE_TIER_ID!) {
         return false
     }
