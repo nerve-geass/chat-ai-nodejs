@@ -24,7 +24,7 @@ export const Dashboard = ({session}: {session: Session}) => {
     }
 
     const stripePromise = loadStripe(process.env.NEXT_PUBLIC_STRIPE_PUBLISHABLE_KEY!);
-    const createCheckOutSession = async (itemId: String) => {
+    const createCheckOutSession = async (itemId: String, profileId: string) => {
         // setLoading(true);
         const stripe = await stripePromise;
         const checkoutSession = await fetch("/api/checkout", {
@@ -33,17 +33,22 @@ export const Dashboard = ({session}: {session: Session}) => {
                 "Content-Type": "application/json",
             },
             body: JSON.stringify({
-                itemId
+                itemId,
+                userId: profileId
             }),
         })
         if (!stripe || stripe === null) {
             alert("Something wrong with payment, retry later")
         }
+        
+        if (checkoutSession.status === 208) {
+            alert("Sottoscrizione ancora valida")
+            return
+        }
 
         const sessionId = (await checkoutSession.json()).id
 
         try {
-
             const saveSession = await fetch("/api/users/" + session?.user?.email! + "/payment/session", {
                 method: "POST",
                 headers: {
@@ -168,7 +173,7 @@ export const Dashboard = ({session}: {session: Session}) => {
                                         </li>
                                     </ul>
                                 </div>
-                                <a onClick={() => createCheckOutSession(proItemId)} className="btn btn-primary hover-animate">
+                                <a onClick={() => createCheckOutSession(proItemId, profile.id)} className="btn btn-primary hover-animate">
                                     Upgrade Now
                                     <i className="mdi mdi-arrow-right ml-1 small"></i>
                                 </a>
@@ -212,7 +217,7 @@ export const Dashboard = ({session}: {session: Session}) => {
                                         </li>
                                     </ul>
                                 </div>
-                                <a onClick={() => createCheckOutSession(premiumItemId)} className="btn btn-primary hover-animate">
+                                <a onClick={() => createCheckOutSession(premiumItemId, profile.id)} className="btn btn-primary hover-animate">
                                     Upgrade Now
                                     <i className="mdi mdi-arrow-right ml-1 small"></i>
                                 </a>

@@ -65,7 +65,7 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
   const chatCompletionText = chatCompletion.choices[0].message.content
   const completionMessage = {
     type: 'in',
-    text: chatCompletionText.replaceAll("\"", "").replaceAll("\[.*?\]", ""),
+    text: chatCompletionText.replaceAll("\"", "").replaceAll("\[.*?\]", "").replaceAll('"', ''),
     image: null,
     avatar: girlfriend.avatar,
     name: girlfriend.id
