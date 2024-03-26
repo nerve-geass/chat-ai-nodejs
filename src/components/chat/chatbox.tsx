@@ -1,4 +1,4 @@
-import { AiGirlfriend, AiGirlfriendType } from "@/models/ai-girlfriend"
+import { AiGirlfriend } from "@/models/ai-girlfriend"
 import { useConversation } from "@/utils/useConversation"
 import useUser from "@/utils/useUser"
 import { Session } from "next-auth"
@@ -14,6 +14,12 @@ export type ConversationType = {
     name: string
 }
 
+export type AiChatGirlfriendType = {
+    id: string
+    avatar: string
+    name: string
+    description: string
+}
 
 export const ChatBox = ({ session, conversationId }: { session: Session, conversationId: string | null }) => {
     const router = useRouter()
@@ -31,7 +37,15 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
     const { getConversation, newConversation, saveMessage, cleanUpChat, generateImageAi: generateImageCallback, chatCompletion, generateVoiceAi } = useConversation()
 
     const [data, setData] = useState<ConversationType[]>([])
-    const [model, setModel] = useState<AiGirlfriendType | null>(AiGirlfriend[0])
+    const modelFromEnv = AiGirlfriend.filter(model => model.id === process.env.NEXT_PUBLIC_MODEL_ID!)[0]
+
+    const model = {
+        id: modelFromEnv.id,
+        avatar: modelFromEnv.avatar,
+        name: modelFromEnv.name,
+        description: modelFromEnv.description
+    } as AiChatGirlfriendType
+    
     const [message, setMessage] = useState<string>("")
     const [isLoading, setLoading] = useState(false)
     const [source, setSource] = useState<AudioBufferSourceNode | null>(null)
@@ -42,7 +56,6 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
             getConversation(user.id, conversationId)
                 .then((data) => {
                     setData(data.conversation)
-                    // setModel(AiGirlfriend.filter(model => model.name === data.modelId)[0])
                     setLoading(false)
                 })
         }
@@ -50,7 +63,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
 
     const handleGenerateImage = async () => {
         setLoading(true)
-        const messageConversationId = conversationId ? conversationId : (await newConversation(user.id, model!.name)).conversationId
+        const messageConversationId = conversationId ? conversationId : (await newConversation(user.id, model!.id)).conversationId
 
         const imageConversation = await generateImageCallback(user.id, model!, messageConversationId)
 
@@ -107,7 +120,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
             name: "me"
         }
 
-        const messageConversationId = conversationId ? conversationId : (await newConversation(user.id, model!.name)).conversationId
+        const messageConversationId = conversationId ? conversationId : (await newConversation(user.id, model!.id)).conversationId
 
         const outNewdata = data.concat(outMessage)
         setData(outNewdata)
@@ -156,7 +169,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
                                             <img src={message.avatar} className="rounded-circle" alt="image" />
                                         </figure>
                                         <div className="align-middle">
-                                            <h5>{message.name}</h5>
+                                            <h5>{message.type === 'in' ? model.name : message.name}</h5>
                                         </div>
                                     </div>
                                     <div className="message-content">

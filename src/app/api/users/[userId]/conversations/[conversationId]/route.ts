@@ -5,7 +5,7 @@ import { NextRequest } from "next/server"
 import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
 export async function GET(request: NextRequest, { params }: { params: { userId: string, conversationId: string } }) {
-  const models = AiGirlfriend.map(model => model.name)
+  const models = AiGirlfriend.map(model => model.id)
 
   try {
     const db = await openDB()
@@ -22,7 +22,7 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
 
     let conversation: ConversationType[] | null = null
 
-    const girlfriend = AiGirlfriend.filter(model => model.name = conversationRecord[0].ModelID)[0]
+    const girlfriend = AiGirlfriend.filter(model => model.id = conversationRecord[0].ModelID)[0]
 
     conversation = data.map(message => {
       return {
@@ -30,11 +30,11 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
         text: message.MessageText,
         image: message.MessageImage,
         avatar: models.indexOf(message.UserOrModelID) === -1 ? "/dist/media/img/avatar6.jpg" : girlfriend.avatar,
-        name: models.includes(message.UserOrModelID) ? girlfriend.name : "me"
+        name: models.includes(message.UserOrModelID) ? girlfriend.id : "me"
       }
     })
 
-    return Response.json({ conversation, modelId: girlfriend.name })
+    return Response.json({ conversation, modelId: girlfriend.id })
   } catch (error) {
     console.log({ message: "looking at conversationid:" + params.conversationId, error })
     return Response.json({ conversation: [], modelId: "error" })

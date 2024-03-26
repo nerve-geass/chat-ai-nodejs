@@ -1,5 +1,5 @@
-import { ConversationType } from "@/components/chat/chatbox";
-import { AiGirlfriend, AiGirlfriendType } from "@/models/ai-girlfriend";
+import { AiChatGirlfriendType, ConversationType } from "@/components/chat/chatbox";
+import { AiGirlfriend } from "@/models/ai-girlfriend";
 
 export const useConversation = () => {
     const getConversation = async (userId: string, conversationId: string): Promise<{ conversation: ConversationType[], modelId: string }> => {
@@ -31,7 +31,7 @@ export const useConversation = () => {
             })
     }
 
-    const getAllConversations = async (userId: string): Promise<{ conversationId: string, model: AiGirlfriendType, createdAt: string }[]> => {
+    const getAllConversations = async (userId: string): Promise<{ conversationId: string, model: AiChatGirlfriendType, createdAt: string }[]> => {
         var myHeaders = new Headers()
         myHeaders.append("Content-Type", "application/json")
 
@@ -42,7 +42,7 @@ export const useConversation = () => {
         const conversations = await conversationResponse.json()
 
         return conversations.map((conversation: { conversationId: string, modelId: string, createdAt: string }) => {
-            const model = AiGirlfriend.find(model => model.name === conversation.modelId)!
+            const model = AiGirlfriend.find(model => model.id === conversation.modelId)!
             return {
                 conversationId: conversation.conversationId,
                 model: model,
@@ -90,10 +90,10 @@ export const useConversation = () => {
         }
     }
 
-    const generateImageAi = async (userId: string, model: AiGirlfriendType, conversationId: string): Promise<ConversationType> => {
+    const generateImageAi = async (userId: string, model: AiChatGirlfriendType, conversationId: string): Promise<ConversationType> => {
         var myHeaders = new Headers()
         myHeaders.append("Content-Type", "application/json")
-        const response = await fetch("/api/users/" + userId + "/chats/" + model.name + "/image",
+        const response = await fetch("/api/users/" + userId + "/chats/" + model.id + "/image",
             { method: 'POST', headers: myHeaders, body: JSON.stringify({ conversationId }) })
         const json = await response.json()
 
@@ -104,14 +104,14 @@ export const useConversation = () => {
             text: null,
             image: json.links[0],
             avatar: model.avatar,
-            name: model.name
+            name: model.id
         } as ConversationType
     }
 
-    const generateVoiceAi = (userId: string, text: string, model: AiGirlfriendType, conversationId: string) => {
+    const generateVoiceAi = (userId: string, text: string, model: AiChatGirlfriendType, conversationId: string) => {
         var myHeaders = new Headers()
         myHeaders.append("Content-Type", "application/json")
-        return fetch("/api/users/" + userId + "/chats/" + model.name + "/voice", {
+        return fetch("/api/users/" + userId + "/chats/" + model.id + "/voice", {
             method: 'POST', headers: myHeaders, body: JSON.stringify({
                 text: text,
                 conversationId
@@ -119,10 +119,10 @@ export const useConversation = () => {
         })
     }
 
-    const chatCompletion = async (userId: string, conversation: ConversationType[], model: AiGirlfriendType, conversationId: string) => {
+    const chatCompletion = async (userId: string, conversation: ConversationType[], model: AiChatGirlfriendType, conversationId: string) => {
         var myHeaders = new Headers()
         myHeaders.append("Content-Type", "application/json")
-        const chatCompletionResponse = await fetch("/api/users/" + userId + "/chats/" + model.name + "/completion", {
+        const chatCompletionResponse = await fetch("/api/users/" + userId + "/chats/" + model.id + "/completion", {
             method: 'POST', headers: myHeaders, body: JSON.stringify({
                 messages: conversation,
                 conversationId
@@ -141,7 +141,7 @@ export const useConversation = () => {
             text: chatCompletionText.replaceAll("\"", "").replaceAll("\[Auto-correzione:.*?\]", ""),
             image: null,
             avatar: model.avatar,
-            name: model.name
+            name: model.id
         } as ConversationType
     }
 

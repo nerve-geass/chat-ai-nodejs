@@ -1,9 +1,9 @@
-import { AiGirlfriend, AiGirlfriendType } from "@/models/ai-girlfriend"
 import { useConversation } from "@/utils/useConversation"
 import useUser from "@/utils/useUser"
 import { Session } from "next-auth"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
+import { AiChatGirlfriendType } from "./chatbox"
 
 export const SideBar = ({session, chatId}: {session: Session, chatId: string | null}) => {
     const { data: user, isLoading: isLoadingUser } = useUser(session.user?.email!)
@@ -11,7 +11,7 @@ export const SideBar = ({session, chatId}: {session: Session, chatId: string | n
 
     const [conversations, setConversations] = useState<{
         conversationId: string
-        model: AiGirlfriendType
+        model: AiChatGirlfriendType
         createdAt: string
     }[] | null>(null) 
 

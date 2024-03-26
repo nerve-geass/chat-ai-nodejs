@@ -8,7 +8,7 @@ import { canGetMessage } from "@/utils/subscriptionUsage"
 export async function POST(request: NextRequest, { params }: { params: { userId: string, modelId: string } }) {
   const groq = new Groq({ apiKey: process.env.GROQ_API_KEY! })
 
-  const girlfriend = AiGirlfriend.filter(model => model.name = params.modelId)[0]
+  const girlfriend = AiGirlfriend.filter(model => model.id = params.modelId)[0]
 
   const body = await request.json()
 
@@ -68,7 +68,7 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
     text: chatCompletionText.replaceAll("\"", "").replaceAll("\[.*?\]", ""),
     image: null,
     avatar: girlfriend.avatar,
-    name: girlfriend.name
+    name: girlfriend.id
   } as ConversationType
 
   try {

@@ -6,7 +6,7 @@ import { NextRequest } from "next/server"
 
 export async function POST(request: NextRequest, { params }: { params: { userId: string, modelId: string } }) {
 
-    const model = AiGirlfriend.filter(model => model.name = params.modelId)[0]
+    const model = AiGirlfriend.filter(model => model.id = params.modelId)[0]
     const body = await request.json()
 
     const conversationId: string = body.conversationId
@@ -57,7 +57,7 @@ export async function POST(request: NextRequest, { params }: { params: { userId:
         text: null,
         image: json.output[0],
         avatar: model.avatar,
-        name: model.name
+        name: model.id
     } as ConversationType
 
     try {

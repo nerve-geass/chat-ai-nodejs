@@ -5,7 +5,7 @@ import { NextRequest } from "next/server"
 import { v4 as uuidv4, v5 as uuidv5 } from 'uuid';
 
 export async function GET(request: NextRequest, { params }: { params: { userId: string, modelId: string } }) {
-  const models = AiGirlfriend.map(model => model.name)
+  const models = AiGirlfriend.map(model => model.id)
 
   const db = await openDB()
   const data = await db.all(`
@@ -16,7 +16,7 @@ export async function GET(request: NextRequest, { params }: { params: { userId: 
 
   let conversation: ConversationType[] | null = null
 
-  const girlfriend = AiGirlfriend.filter(model => model.name = params.modelId)[0]
+  const girlfriend = AiGirlfriend.filter(model => model.id = params.modelId)[0]
 
   conversation = data.map(message => {
     // ConversationID
