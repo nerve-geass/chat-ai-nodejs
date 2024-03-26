@@ -21,7 +21,7 @@ export type AiChatGirlfriendType = {
     description: string
 }
 
-export const ChatBox = ({ session, conversationId }: { session: Session, conversationId: string | null }) => {
+export const ChatBox = ({ session, conversationId, modelId }: { session: Session, conversationId: string | null, modelId: string }) => {
     const router = useRouter()
 
     let audioCtx: AudioContext
@@ -37,7 +37,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
     const { getConversation, newConversation, saveMessage, cleanUpChat, generateImageAi: generateImageCallback, chatCompletion, generateVoiceAi } = useConversation()
 
     const [data, setData] = useState<ConversationType[]>([])
-    const modelFromEnv = AiGirlfriend.filter(model => model.id === process.env.NEXT_PUBLIC_MODEL_ID!)[0]
+    const modelFromEnv = AiGirlfriend.filter(model => model.id === modelId)[0]
 
     const model = {
         id: modelFromEnv.id,
@@ -45,7 +45,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
         name: modelFromEnv.name,
         description: modelFromEnv.description
     } as AiChatGirlfriendType
-    
+
     const [message, setMessage] = useState<string>("")
     const [isLoading, setLoading] = useState(false)
     const [source, setSource] = useState<AudioBufferSourceNode | null>(null)
@@ -98,7 +98,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
         try {
             // For knowledge
             // https://github.com/mdn/webaudio-examples/blob/main/audio-buffer-source-node/playbackrate/script.js
-            if(source) {
+            if (source) {
                 source.stop()
                 setSource(null)
             }
@@ -148,7 +148,7 @@ export const ChatBox = ({ session, conversationId }: { session: Session, convers
     }
 
     useEffect(() => {
-        if(source) source.start()
+        if (source) source.start()
     }, [source])
 
     useEffect(() => {

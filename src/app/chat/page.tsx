@@ -13,15 +13,28 @@ import HeaderNav from "../../components/header";
 import { useSearchParams } from "next/navigation";
 import Image from "next/image";
 import Loader from "@/components/loader";
+import { useEffect, useState } from "react";
+import { useModel } from "@/utils/useModel";
 
 export default function Chat() {
     const query = useSearchParams()
+
+    const { getModel } = useModel()
 
     const chatId = query.get('chatId')
 
     const { data: session, status } = useSession()
 
-    if (status === "loading") {
+    const [modelId, setModelId] = useState<string | null>(null)
+
+    useEffect(() => {
+        if (modelId === null) {
+            getModel().then((data) => setModelId(data.modelId))
+        }
+    }, [modelId])
+
+
+    if (status === "loading" || modelId === null) {
         return <Loader />
     }
 
@@ -40,7 +53,7 @@ export default function Chat() {
                     {/* <!-- ./ Chat left sidebar --> */}
 
                     {/* <!-- chat --> */}
-                    <ChatBox session={session!} conversationId={chatId}
+                    <ChatBox session={session!} conversationId={chatId} modelId={modelId}
                     />
                     {/* <!-- ./ chat --> */}
 
